@@ -33,20 +33,20 @@ describe('OceanProtocol Node', () => {
       expect(node.description.outputs).toContain('main');
     });
 
-    it('should define 5 resources', () => {
+    it('should define 6 resources', () => {
       const resourceProp = node.description.properties.find(
         (p: any) => p.name === 'resource'
       );
       expect(resourceProp).toBeDefined();
       expect(resourceProp!.type).toBe('options');
-      expect(resourceProp!.options).toHaveLength(5);
+      expect(resourceProp!.options).toHaveLength(6);
     });
 
     it('should have operation dropdowns for each resource', () => {
       const operations = node.description.properties.filter(
         (p: any) => p.name === 'operation'
       );
-      expect(operations.length).toBe(5);
+      expect(operations.length).toBe(6);
     });
 
     it('should require credentials', () => {
@@ -67,611 +67,415 @@ describe('OceanProtocol Node', () => {
   });
 
   // Resource-specific tests
-describe('DataNFTs Resource', () => {
+describe('Asset Resource', () => {
   let mockExecuteFunctions: any;
 
   beforeEach(() => {
     mockExecuteFunctions = {
       getNodeParameter: jest.fn(),
       getCredentials: jest.fn().mockResolvedValue({
-        apiKey: 'test-api-key',
-        baseUrl: 'https://v4.aquarius.oceanprotocol.com',
+        apiKey: 'test-key',
+        baseUrl: 'https://v4.aquarius.oceanprotocol.com'
       }),
       getInputData: jest.fn().mockReturnValue([{ json: {} }]),
       getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
       continueOnFail: jest.fn().mockReturnValue(false),
       helpers: {
         httpRequest: jest.fn(),
-        requestWithAuthentication: jest.fn(),
+        requestWithAuthentication: jest.fn()
       },
     };
   });
 
-  it('should create a Data NFT successfully', async () => {
-    const mockResponse = { id: 'did:op:12345', created: true };
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      switch (param) {
-        case 'operation': return 'createDataNFT';
-        case 'metadata': return { name: 'Test NFT', description: 'Test Description' };
-        case 'services': return [{ type: 'access', url: 'https://example.com' }];
-        case 'credentials': return { wallet: '0x123' };
-        default: return undefined;
-      }
-    });
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+  test('createAsset operation success', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('createAsset')
+      .mockReturnValueOnce('did:op:test123')
+      .mockReturnValueOnce({ name: 'Test Asset', description: 'Test Description' })
+      .mockReturnValueOnce([{ type: 'access' }]);
 
-    const result = await executeDataNFTsOperations.call(mockExecuteFunctions, [{ json: {} }]);
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({ success: true, did: 'did:op:test123' });
 
-    expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'POST',
-      url: 'https://v4.aquarius.oceanprotocol.com/api/aquarius/assets/ddo',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer test-api-key',
-      },
-      body: {
-        metadata: { name: 'Test NFT', description: 'Test Description' },
-        services: [{ type: 'access', url: 'https://example.com' }],
-        credentials: { wallet: '0x123' },
-      },
-      json: true,
-    });
-  });
-
-  it('should get a Data NFT successfully', async () => {
-    const mockResponse = { id: 'did:op:12345', metadata: { name: 'Test NFT' } };
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      switch (param) {
-        case 'operation': return 'getDataNFT';
-        case 'did': return 'did:op:12345';
-        default: return undefined;
-      }
-    });
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-    const result = await executeDataNFTsOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-    expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'GET',
-      url: 'https://v4.aquarius.oceanprotocol.com/api/aquarius/assets/ddo/did:op:12345',
-      headers: {
-        'Authorization': 'Bearer test-api-key',
-      },
-      json: true,
-    });
-  });
-
-  it('should search Data NFTs successfully', async () => {
-    const mockResponse = { results: [], totalResults: 0 };
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      switch (param) {
-        case 'operation': return 'searchDataNFTs';
-        case 'query': return { text: 'ocean' };
-        case 'offset': return 0;
-        case 'size': return 25;
-        case 'sort': return { created: 'desc' };
-        default: return undefined;
-      }
-    });
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-    const result = await executeDataNFTsOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-    expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'GET',
-      url: 'https://v4.aquarius.oceanprotocol.com/api/aquarius/assets/query',
-      headers: {
-        'Authorization': 'Bearer test-api-key',
-      },
-      qs: {
-        query: '{"text":"ocean"}',
-        offset: 0,
-        size: 25,
-        sort: '{"created":"desc"}',
-      },
-      json: true,
-    });
-  });
-
-  it('should update a Data NFT successfully', async () => {
-    const mockResponse = { id: 'did:op:12345', updated: true };
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      switch (param) {
-        case 'operation': return 'updateDataNFT';
-        case 'did': return 'did:op:12345';
-        case 'metadata': return { name: 'Updated NFT' };
-        case 'credentials': return { wallet: '0x123' };
-        default: return undefined;
-      }
-    });
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-    const result = await executeDataNFTsOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-    expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
-  });
-
-  it('should delete a Data NFT successfully', async () => {
-    const mockResponse = { deleted: true };
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      switch (param) {
-        case 'operation': return 'deleteDataNFT';
-        case 'did': return 'did:op:12345';
-        case 'credentials': return { wallet: '0x123' };
-        default: return undefined;
-      }
-    });
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-    const result = await executeDataNFTsOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-    expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
-  });
-
-  it('should handle API errors correctly', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      switch (param) {
-        case 'operation': return 'getDataNFT';
-        case 'did': return 'invalid-did';
-        default: return undefined;
-      }
-    });
-    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
-
-    await expect(executeDataNFTsOperations.call(mockExecuteFunctions, [{ json: {} }]))
-      .rejects
-      .toThrow();
-  });
-
-  it('should handle unknown operations', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'unknownOperation';
-      return undefined;
-    });
-
-    await expect(executeDataNFTsOperations.call(mockExecuteFunctions, [{ json: {} }]))
-      .rejects
-      .toThrow('Unknown operation: unknownOperation');
-  });
-});
-
-describe('Datatokens Resource', () => {
-  let mockExecuteFunctions: any;
-
-  beforeEach(() => {
-    mockExecuteFunctions = {
-      getNodeParameter: jest.fn(),
-      getCredentials: jest.fn().mockResolvedValue({
-        apiKey: 'test-api-key',
-        baseUrl: 'https://v4.aquarius.oceanprotocol.com',
-      }),
-      getInputData: jest.fn().mockReturnValue([{ json: {} }]),
-      getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
-      continueOnFail: jest.fn().mockReturnValue(false),
-      helpers: {
-        httpRequest: jest.fn(),
-        requestWithAuthentication: jest.fn(),
-      },
-    };
-  });
-
-  test('should create datatoken successfully', async () => {
-    const mockResponse = { id: 'did:op:123', datatoken: '0x123abc' };
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      switch (param) {
-        case 'operation': return 'createDatatoken';
-        case 'dataTokenOptions': return { name: 'Test Token', symbol: 'TT' };
-        case 'fixedPriceOptions': return { price: '1.0' };
-        default: return undefined;
-      }
-    });
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-    const result = await executeDatatokensOperations.call(mockExecuteFunctions, [{ json: {} }]);
+    const result = await executeAssetOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
     expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
       method: 'POST',
       url: 'https://v4.aquarius.oceanprotocol.com/api/aquarius/assets/ddo',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer test-api-key',
+        'Authorization': 'Bearer test-key',
+        'Content-Type': 'application/json'
       },
       body: {
-        dataTokenOptions: { name: 'Test Token', symbol: 'TT' },
-        fixedPriceOptions: { price: '1.0' },
+        did: 'did:op:test123',
+        metadata: { name: 'Test Asset', description: 'Test Description' },
+        services: [{ type: 'access' }]
       },
-      json: true,
+      json: true
     });
-    expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
+
+    expect(result).toEqual([{
+      json: { success: true, did: 'did:op:test123' },
+      pairedItem: { item: 0 }
+    }]);
   });
 
-  test('should get datatoken by DID successfully', async () => {
-    const mockResponse = { id: 'did:op:123', services: [] };
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      switch (param) {
-        case 'operation': return 'getDatatoken';
-        case 'did': return 'did:op:123';
-        default: return undefined;
-      }
-    });
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+  test('getAsset operation success', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getAsset')
+      .mockReturnValueOnce('did:op:test123');
 
-    const result = await executeDatatokensOperations.call(mockExecuteFunctions, [{ json: {} }]);
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({ did: 'did:op:test123', metadata: {} });
+
+    const result = await executeAssetOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
     expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
       method: 'GET',
-      url: 'https://v4.aquarius.oceanprotocol.com/api/aquarius/assets/ddo/did%3Aop%3A123',
+      url: 'https://v4.aquarius.oceanprotocol.com/api/aquarius/assets/ddo/did:op:test123',
       headers: {
-        'Authorization': 'Bearer test-api-key',
+        'Authorization': 'Bearer test-key'
       },
-      json: true,
+      json: true
     });
-    expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
+
+    expect(result).toEqual([{
+      json: { did: 'did:op:test123', metadata: {} },
+      pairedItem: { item: 0 }
+    }]);
   });
 
-  test('should search datatokens successfully', async () => {
-    const mockResponse = { results: [], totalResults: 0 };
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      switch (param) {
-        case 'operation': return 'searchDatatokens';
-        case 'query': return { text: 'ocean data' };
-        case 'dataTokenAddress': return '0x123abc';
-        default: return undefined;
-      }
-    });
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+  test('getAllAssets operation success', async () => {
+    mockExecuteFunctions.getNodeParameter
+      .mockReturnValueOnce('getAllAssets')
+      .mockReturnValueOnce(1)
+      .mockReturnValueOnce(0)
+      .mockReturnValueOnce('created')
+      .mockReturnValueOnce(true);
 
-    const result = await executeDatatokensOperations.call(mockExecuteFunctions, [{ json: {} }]);
+    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({ assets: [], totalCount: 0 });
+
+    const result = await executeAssetOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
     expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
       method: 'GET',
-      url: 'https://v4.aquarius.oceanprotocol.com/api/aquarius/assets/query',
+      url: 'https://v4.aquarius.oceanprotocol.com/api/aquarius/assets?page=1&offset=0&sort=created&asc=true',
       headers: {
-        'Authorization': 'Bearer test-api-key',
+        'Authorization': 'Bearer test-key'
       },
-      qs: {
-        query: { text: 'ocean data' },
-        dataTokenAddress: '0x123abc',
-      },
-      json: true,
+      json: true
     });
-    expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
+
+    expect(result).toEqual([{
+      json: { assets: [], totalCount: 0 },
+      pairedItem: { item: 0 }
+    }]);
   });
 
-  test('should purchase datatoken successfully', async () => {
-    const mockResponse = { orderId: 'order-123', transactionHash: '0xabc123' };
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      switch (param) {
-        case 'operation': return 'purchaseDatatoken';
-        case 'did': return 'did:op:123';
-        case 'consumerAddress': return '0x456def';
-        case 'serviceIndex': return 0;
-        default: return undefined;
-      }
-    });
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-    const result = await executeDatatokensOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'POST',
-      url: 'https://v4.aquarius.oceanprotocol.com/api/aquarius/assets/ddo/did%3Aop%3A123/order',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer test-api-key',
-      },
-      body: {
-        consumerAddress: '0x456def',
-        serviceIndex: 0,
-      },
-      json: true,
-    });
-    expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
-  });
-
-  test('should get compute environments successfully', async () => {
-    const mockResponse = { environments: [] };
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      switch (param) {
-        case 'operation': return 'getComputeEnvironments';
-        case 'did': return 'did:op:123';
-        default: return undefined;
-      }
-    });
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-    const result = await executeDatatokensOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'GET',
-      url: 'https://v4.aquarius.oceanprotocol.com/api/aquarius/assets/ddo/did%3Aop%3A123/computeEnvironments',
-      headers: {
-        'Authorization': 'Bearer test-api-key',
-      },
-      json: true,
-    });
-    expect(result).toEqual([{ json: mockResponse, pairedItem: { item: 0 } }]);
-  });
-
-  test('should handle API errors gracefully', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      if (param === 'operation') return 'getDatatoken';
-      if (param === 'did') return 'invalid-did';
-      return undefined;
-    });
+  test('error handling', async () => {
+    mockExecuteFunctions.getNodeParameter.mockReturnValue('getAsset');
     mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
     mockExecuteFunctions.continueOnFail.mockReturnValue(true);
 
-    const result = await executeDatatokensOperations.call(mockExecuteFunctions, [{ json: {} }]);
+    const result = await executeAssetOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-    expect(result).toEqual([{ json: { error: 'API Error' }, pairedItem: { item: 0 } }]);
+    expect(result).toEqual([{
+      json: { error: 'API Error' },
+      pairedItem: { item: 0 }
+    }]);
   });
 });
 
-describe('ComputeToData Resource', () => {
-  let mockExecuteFunctions: any;
+describe('Datatoken Resource', () => {
+	let mockExecuteFunctions: any;
 
-  beforeEach(() => {
-    mockExecuteFunctions = {
-      getNodeParameter: jest.fn(),
-      getCredentials: jest.fn().mockResolvedValue({
-        apiKey: 'test-api-key',
-        baseUrl: 'https://v4.aquarius.oceanprotocol.com',
-      }),
-      getInputData: jest.fn().mockReturnValue([{ json: {} }]),
-      getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
-      continueOnFail: jest.fn().mockReturnValue(false),
-      helpers: {
-        httpRequest: jest.fn(),
-        requestWithAuthentication: jest.fn(),
-      },
-    };
-  });
+	beforeEach(() => {
+		mockExecuteFunctions = {
+			getNodeParameter: jest.fn(),
+			getCredentials: jest.fn().mockResolvedValue({
+				apiKey: 'test-key',
+				baseUrl: 'https://v4.aquarius.oceanprotocol.com',
+			}),
+			getInputData: jest.fn().mockReturnValue([{ json: {} }]),
+			getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
+			continueOnFail: jest.fn().mockReturnValue(false),
+			helpers: {
+				httpRequest: jest.fn(),
+			},
+		};
+	});
 
-  it('should start a compute job successfully', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      switch (param) {
-        case 'operation': return 'startComputeJob';
-        case 'dataset': return 'did:op:dataset123';
-        case 'algorithm': return 'did:op:algorithm456';
-        case 'compute': return '{"type":"kubernetes","namespace":"ocean-compute"}';
-        case 'consumerAddress': return '0x1234567890abcdef';
-        default: return '';
-      }
-    });
+	test('should create datatoken successfully', async () => {
+		mockExecuteFunctions.getNodeParameter
+			.mockReturnValueOnce('createDatatoken')
+			.mockReturnValueOnce('Test Datatoken')
+			.mockReturnValueOnce('TDT')
+			.mockReturnValueOnce(1)
+			.mockReturnValueOnce('0x1234567890abcdef')
+			.mockReturnValueOnce('1000000');
 
-    const mockResponse = {
-      jobId: 'job-123',
-      status: 'started',
-      dataset: 'did:op:dataset123',
-      algorithm: 'did:op:algorithm456',
-    };
+		mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({
+			success: true,
+			address: '0xabcdef1234567890',
+		});
 
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+		const items = [{ json: {} }];
+		const result = await executeDatatokenOperations.call(mockExecuteFunctions, items);
 
-    const result = await executeComputeToDataOperations.call(
-      mockExecuteFunctions,
-      [{ json: {} }],
-    );
+		expect(result).toHaveLength(1);
+		expect(result[0].json.success).toBe(true);
+		expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				method: 'POST',
+				url: 'https://v4.aquarius.oceanprotocol.com/api/aquarius/datatokens',
+			}),
+		);
+	});
 
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'POST',
-      url: 'https://v4.aquarius.oceanprotocol.com/api/services/compute',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: {
-        dataset: 'did:op:dataset123',
-        algorithm: 'did:op:algorithm456',
-        compute: { type: 'kubernetes', namespace: 'ocean-compute' },
-        consumerAddress: '0x1234567890abcdef',
-      },
-      json: true,
-    });
-  });
+	test('should get datatoken successfully', async () => {
+		mockExecuteFunctions.getNodeParameter
+			.mockReturnValueOnce('getDatatoken')
+			.mockReturnValueOnce('0xabcdef1234567890');
 
-  it('should get compute jobs successfully', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      switch (param) {
-        case 'operation': return 'getComputeJobs';
-        case 'consumerAddress': return '0x1234567890abcdef';
-        case 'jobId': return '';
-        default: return '';
-      }
-    });
+		mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({
+			address: '0xabcdef1234567890',
+			name: 'Test Datatoken',
+			symbol: 'TDT',
+		});
 
-    const mockResponse = [
-      { jobId: 'job-123', status: 'running' },
-      { jobId: 'job-456', status: 'completed' },
-    ];
+		const items = [{ json: {} }];
+		const result = await executeDatatokenOperations.call(mockExecuteFunctions, items);
 
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+		expect(result).toHaveLength(1);
+		expect(result[0].json.address).toBe('0xabcdef1234567890');
+		expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				method: 'GET',
+				url: 'https://v4.aquarius.oceanprotocol.com/api/aquarius/datatokens/0xabcdef1234567890',
+			}),
+		);
+	});
 
-    const result = await executeComputeToDataOperations.call(
-      mockExecuteFunctions,
-      [{ json: {} }],
-    );
+	test('should handle errors when continuing on fail', async () => {
+		mockExecuteFunctions.getNodeParameter.mockReturnValue('getDatatoken');
+		mockExecuteFunctions.continueOnFail.mockReturnValue(true);
+		mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
 
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'GET',
-      url: 'https://v4.aquarius.oceanprotocol.com/api/services/compute',
-      qs: {
-        consumerAddress: '0x1234567890abcdef',
-      },
-      json: true,
-    });
-  });
+		const items = [{ json: {} }];
+		const result = await executeDatatokenOperations.call(mockExecuteFunctions, items);
 
-  it('should get specific compute job successfully', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      switch (param) {
-        case 'operation': return 'getComputeJob';
-        case 'jobId': return 'job-123';
-        case 'consumerAddress': return '0x1234567890abcdef';
-        default: return '';
-      }
-    });
+		expect(result).toHaveLength(1);
+		expect(result[0].json.error).toBe('API Error');
+	});
 
-    const mockResponse = {
-      jobId: 'job-123',
-      status: 'running',
-      dataset: 'did:op:dataset123',
-      algorithm: 'did:op:algorithm456',
-      startedAt: '2023-01-01T00:00:00Z',
-    };
+	test('should throw error when not continuing on fail', async () => {
+		mockExecuteFunctions.getNodeParameter.mockReturnValue('getDatatoken');
+		mockExecuteFunctions.continueOnFail.mockReturnValue(false);
+		mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
 
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+		const items = [{ json: {} }];
 
-    const result = await executeComputeToDataOperations.call(
-      mockExecuteFunctions,
-      [{ json: {} }],
-    );
+		await expect(
+			executeDatatokenOperations.call(mockExecuteFunctions, items),
+		).rejects.toThrow('API Error');
+	});
+});
 
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'GET',
-      url: 'https://v4.aquarius.oceanprotocol.com/api/services/compute/job-123',
-      qs: {
-        consumerAddress: '0x1234567890abcdef',
-      },
-      json: true,
-    });
-  });
+describe('ComputeJob Resource', () => {
+	let mockExecuteFunctions: any;
 
-  it('should stop compute job successfully', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      switch (param) {
-        case 'operation': return 'stopComputeJob';
-        case 'jobId': return 'job-123';
-        case 'consumerAddress': return '0x1234567890abcdef';
-        default: return '';
-      }
-    });
+	beforeEach(() => {
+		mockExecuteFunctions = {
+			getNodeParameter: jest.fn(),
+			getCredentials: jest.fn().mockResolvedValue({
+				apiKey: 'test-key',
+				baseUrl: 'https://v4.aquarius.oceanprotocol.com',
+			}),
+			getInputData: jest.fn().mockReturnValue([{ json: {} }]),
+			getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
+			continueOnFail: jest.fn().mockReturnValue(false),
+			helpers: {
+				httpRequest: jest.fn(),
+				requestWithAuthentication: jest.fn(),
+			},
+		};
+	});
 
-    const mockResponse = {
-      jobId: 'job-123',
-      status: 'stopped',
-    };
+	it('should create compute job successfully', async () => {
+		mockExecuteFunctions.getNodeParameter
+			.mockReturnValueOnce('createComputeJob')
+			.mockReturnValueOnce('test-signature')
+			.mockReturnValueOnce('test-document-id')
+			.mockReturnValueOnce('test-service-id')
+			.mockReturnValueOnce('0x123456789')
+			.mockReturnValueOnce('test-job-id')
+			.mockReturnValueOnce({});
 
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+		mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({
+			jobId: 'test-job-id',
+			status: 'started',
+		});
 
-    const result = await executeComputeToDataOperations.call(
-      mockExecuteFunctions,
-      [{ json: {} }],
-    );
+		const result = await executeComputeJobOperations.call(
+			mockExecuteFunctions,
+			[{ json: {} }],
+		);
 
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'PUT',
-      url: 'https://v4.aquarius.oceanprotocol.com/api/services/compute/job-123',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: {
-        consumerAddress: '0x1234567890abcdef',
-      },
-      json: true,
-    });
-  });
+		expect(result).toHaveLength(1);
+		expect(result[0].json).toHaveProperty('jobId', 'test-job-id');
+		expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				method: 'POST',
+				url: 'https://v4.aquarius.oceanprotocol.com/api/services/compute',
+			}),
+		);
+	});
 
-  it('should delete compute job successfully', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      switch (param) {
-        case 'operation': return 'deleteComputeJob';
-        case 'jobId': return 'job-123';
-        case 'consumerAddress': return '0x1234567890abcdef';
-        default: return '';
-      }
-    });
+	it('should get compute job successfully', async () => {
+		mockExecuteFunctions.getNodeParameter
+			.mockReturnValueOnce('getComputeJob')
+			.mockReturnValueOnce('test-signature')
+			.mockReturnValueOnce('test-document-id')
+			.mockReturnValueOnce('test-service-id')
+			.mockReturnValueOnce('0x123456789')
+			.mockReturnValueOnce('test-job-id');
 
-    const mockResponse = {
-      jobId: 'job-123',
-      status: 'deleted',
-    };
+		mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({
+			jobId: 'test-job-id',
+			status: 'running',
+			progress: 50,
+		});
 
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+		const result = await executeComputeJobOperations.call(
+			mockExecuteFunctions,
+			[{ json: {} }],
+		);
 
-    const result = await executeComputeToDataOperations.call(
-      mockExecuteFunctions,
-      [{ json: {} }],
-    );
+		expect(result).toHaveLength(1);
+		expect(result[0].json).toHaveProperty('status', 'running');
+		expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				method: 'GET',
+				url: expect.stringContaining('/api/services/compute'),
+			}),
+		);
+	});
 
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'DELETE',
-      url: 'https://v4.aquarius.oceanprotocol.com/api/services/compute/job-123',
-      qs: {
-        consumerAddress: '0x1234567890abcdef',
-      },
-      json: true,
-    });
-  });
+	it('should get all compute jobs successfully', async () => {
+		mockExecuteFunctions.getNodeParameter
+			.mockReturnValueOnce('getAllComputeJobs')
+			.mockReturnValueOnce('test-signature')
+			.mockReturnValueOnce('0x123456789');
 
-  it('should get compute results successfully', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      switch (param) {
-        case 'operation': return 'getComputeResults';
-        case 'jobId': return 'job-123';
-        case 'consumerAddress': return '0x1234567890abcdef';
-        case 'index': return 0;
-        default: return '';
-      }
-    });
+		mockExecuteFunctions.helpers.httpRequest.mockResolvedValue([
+			{ jobId: 'job1', status: 'completed' },
+			{ jobId: 'job2', status: 'running' },
+		]);
 
-    const mockResponse = Buffer.from('result data');
+		const result = await executeComputeJobOperations.call(
+			mockExecuteFunctions,
+			[{ json: {} }],
+		);
 
-    mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+		expect(result).toHaveLength(1);
+		expect(result[0].json).toHaveLength(2);
+		expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				method: 'GET',
+				url: expect.stringContaining('/api/services/compute'),
+			}),
+		);
+	});
 
-    const result = await executeComputeToDataOperations.call(
-      mockExecuteFunctions,
-      [{ json: {} }],
-    );
+	it('should update compute job successfully', async () => {
+		mockExecuteFunctions.getNodeParameter
+			.mockReturnValueOnce('updateComputeJob')
+			.mockReturnValueOnce('test-signature')
+			.mockReturnValueOnce('test-document-id')
+			.mockReturnValueOnce('test-service-id')
+			.mockReturnValueOnce('0x123456789')
+			.mockReturnValueOnce('test-job-id')
+			.mockReturnValueOnce('stop');
 
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual(mockResponse);
-    expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-      method: 'GET',
-      url: 'https://v4.aquarius.oceanprotocol.com/api/services/compute/job-123/output',
-      qs: {
-        consumerAddress: '0x1234567890abcdef',
-        index: 0,
-      },
-      encoding: null,
-      json: false,
-    });
-  });
+		mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({
+			jobId: 'test-job-id',
+			status: 'stopped',
+		});
 
-  it('should handle errors when continueOnFail is true', async () => {
-    mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-      switch (param) {
-        case 'operation': return 'getComputeJob';
-        case 'jobId': return 'invalid-job';
-        case 'consumerAddress': return '0x1234567890abcdef';
-        default: return '';
-      }
-    });
+		const result = await executeComputeJobOperations.call(
+			mockExecuteFunctions,
+			[{ json: {} }],
+		);
 
-    mockExecuteFunctions.continueOnFail.mockReturnValue(true);
-    mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('Job not found'));
+		expect(result).toHaveLength(1);
+		expect(result[0].json).toHaveProperty('status', 'stopped');
+		expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				method: 'PUT',
+				url: 'https://v4.aquarius.oceanprotocol.com/api/services/compute',
+			}),
+		);
+	});
 
-    const result = await executeComputeToDataOperations.call(
-      mockExecuteFunctions,
-      [{ json: {} }],
-    );
+	it('should delete compute job successfully', async () => {
+		mockExecuteFunctions.getNodeParameter
+			.mockReturnValueOnce('deleteComputeJob')
+			.mockReturnValueOnce('test-signature')
+			.mockReturnValueOnce('test-document-id')
+			.mockReturnValueOnce('test-service-id')
+			.mockReturnValueOnce('0x123456789')
+			.mockReturnValueOnce('test-job-id');
 
-    expect(result).toHaveLength(1);
-    expect(result[0].json).toEqual({ error: 'Job not found' });
-  });
+		mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({
+			success: true,
+			message: 'Compute job deleted successfully',
+		});
+
+		const result = await executeComputeJobOperations.call(
+			mockExecuteFunctions,
+			[{ json: {} }],
+		);
+
+		expect(result).toHaveLength(1);
+		expect(result[0].json).toHaveProperty('success', true);
+		expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				method: 'DELETE',
+				url: 'https://v4.aquarius.oceanprotocol.com/api/services/compute',
+			}),
+		);
+	});
+
+	it('should handle API errors', async () => {
+		mockExecuteFunctions.getNodeParameter
+			.mockReturnValueOnce('createComputeJob')
+			.mockReturnValueOnce('test-signature');
+
+		mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(
+			new Error('API Error'),
+		);
+
+		await expect(
+			executeComputeJobOperations.call(mockExecuteFunctions, [{ json: {} }]),
+		).rejects.toThrow('API Error');
+	});
+
+	it('should handle errors with continueOnFail', async () => {
+		mockExecuteFunctions.getNodeParameter
+			.mockReturnValueOnce('createComputeJob')
+			.mockReturnValueOnce('test-signature');
+
+		mockExecuteFunctions.continueOnFail.mockReturnValue(true);
+		mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(
+			new Error('API Error'),
+		);
+
+		const result = await executeComputeJobOperations.call(
+			mockExecuteFunctions,
+			[{ json: {} }],
+		);
+
+		expect(result).toHaveLength(1);
+		expect(result[0].json).toHaveProperty('error', 'API Error');
+	});
 });
 
 describe('VeOcean Resource', () => {
@@ -682,437 +486,565 @@ describe('VeOcean Resource', () => {
       getNodeParameter: jest.fn(),
       getCredentials: jest.fn().mockResolvedValue({
         apiKey: 'test-api-key',
-        baseUrl: 'https://v4.aquarius.oceanprotocol.com',
+        baseUrl: 'https://v4.aquarius.oceanprotocol.com'
       }),
       getInputData: jest.fn().mockReturnValue([{ json: {} }]),
       getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
       continueOnFail: jest.fn().mockReturnValue(false),
       helpers: {
-        httpRequest: jest.fn(),
-        requestWithAuthentication: jest.fn(),
-      },
+        httpRequest: jest.fn()
+      }
     };
   });
 
-  describe('getVeOceanStats', () => {
-    it('should successfully get veOCEAN statistics', async () => {
+  describe('getVeOceanLocks', () => {
+    it('should get veOCEAN locks successfully', async () => {
       const mockResponse = {
-        totalVeOcean: '1000000',
-        totalAllocations: '500000',
-        stats: {},
+        locks: [
+          {
+            amount: '1000000000000000000',
+            unlockTime: 1234567890,
+            lockId: 'lock_123'
+          }
+        ]
       };
 
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        switch (paramName) {
-          case 'operation': return 'getVeOceanStats';
-          case 'query': return 'test query';
-          case 'veAllocate': return true;
-          default: return undefined;
-        }
-      });
+      mockExecuteFunctions.getNodeParameter
+        .mockReturnValueOnce('getVeOceanLocks')
+        .mockReturnValueOnce('0x123...abc')
+        .mockReturnValueOnce('1');
 
       mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-      const result = await executeVeOceanOperations.call(mockExecuteFunctions, [{ json: {} }]);
+      const result = await executeVeOceanOperations.call(
+        mockExecuteFunctions,
+        [{ json: {} }]
+      );
 
       expect(result).toEqual([{
         json: mockResponse,
-        pairedItem: { item: 0 },
+        pairedItem: { item: 0 }
       }]);
 
       expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
         method: 'GET',
-        url: 'https://v4.aquarius.oceanprotocol.com/api/aquarius/assets/query',
-        qs: {
-          query: 'test query',
-          veAllocate: true,
-        },
+        url: 'https://v4.aquarius.oceanprotocol.com/api/aquarius/veocean/locks/0x123...abc',
         headers: {
-          'Content-Type': 'application/json',
+          'Authorization': 'Bearer test-api-key',
+          'Content-Type': 'application/json'
         },
-        json: true,
+        qs: { chainId: '1' },
+        json: true
       });
     });
 
-    it('should handle errors when getting veOCEAN statistics', async () => {
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        switch (paramName) {
-          case 'operation': return 'getVeOceanStats';
-          case 'query': return 'test query';
-          default: return undefined;
-        }
-      });
+    it('should handle errors when getting veOCEAN locks', async () => {
+      mockExecuteFunctions.getNodeParameter.mockReturnValueOnce('getVeOceanLocks');
+      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
+      mockExecuteFunctions.continueOnFail.mockReturnValue(true);
 
-      const mockError = new Error('API Error');
-      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(mockError);
-
-      await expect(executeVeOceanOperations.call(mockExecuteFunctions, [{ json: {} }]))
-        .rejects.toThrow('API Error');
-    });
-  });
-
-  describe('allocateVeOcean', () => {
-    it('should successfully allocate veOCEAN', async () => {
-      const mockResponse = {
-        transactionId: '0x123',
-        status: 'success',
-      };
-
-      const allocationData = { amount: '1000', assetId: 'did:op:123' };
-
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        switch (paramName) {
-          case 'operation': return 'allocateVeOcean';
-          case 'allocation': return JSON.stringify(allocationData);
-          case 'userData': return '{}';
-          default: return undefined;
-        }
-      });
-
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-      const result = await executeVeOceanOperations.call(mockExecuteFunctions, [{ json: {} }]);
+      const result = await executeVeOceanOperations.call(
+        mockExecuteFunctions,
+        [{ json: {} }]
+      );
 
       expect(result).toEqual([{
-        json: mockResponse,
-        pairedItem: { item: 0 },
-      }]);
-
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'POST',
-        url: 'https://v4.aquarius.oceanprotocol.com/api/aquarius/assets/ddo',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: {
-          allocation: allocationData,
-          userData: {},
-        },
-        json: true,
-      });
-    });
-  });
-
-  describe('getVeOceanAllocations', () => {
-    it('should successfully get veOCEAN allocations', async () => {
-      const mockResponse = {
-        did: 'did:op:123',
-        allocations: [],
-      };
-
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        switch (paramName) {
-          case 'operation': return 'getVeOceanAllocations';
-          case 'did': return 'did:op:123';
-          default: return undefined;
-        }
-      });
-
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
-
-      const result = await executeVeOceanOperations.call(mockExecuteFunctions, [{ json: {} }]);
-
-      expect(result).toEqual([{
-        json: mockResponse,
-        pairedItem: { item: 0 },
+        json: { error: 'API Error' },
+        pairedItem: { item: 0 }
       }]);
     });
   });
 
-  describe('getRewards', () => {
-    it('should successfully get rewards information', async () => {
+  describe('createVeOceanLock', () => {
+    it('should create veOCEAN lock successfully', async () => {
       const mockResponse = {
-        rewards: [],
-        totalRewards: '5000',
+        success: true,
+        lockId: 'lock_456',
+        transactionHash: '0xabc123'
       };
 
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        switch (paramName) {
-          case 'operation': return 'getRewards';
-          case 'chainIds': return '1,137';
-          default: return undefined;
-        }
-      });
+      mockExecuteFunctions.getNodeParameter
+        .mockReturnValueOnce('createVeOceanLock')
+        .mockReturnValueOnce('1000000000000000000')
+        .mockReturnValueOnce('2024-12-31T23:59:59Z')
+        .mockReturnValueOnce('0x123...abc');
 
       mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-      const result = await executeVeOceanOperations.call(mockExecuteFunctions, [{ json: {} }]);
+      const result = await executeVeOceanOperations.call(
+        mockExecuteFunctions,
+        [{ json: {} }]
+      );
 
       expect(result).toEqual([{
         json: mockResponse,
-        pairedItem: { item: 0 },
+        pairedItem: { item: 0 }
       }]);
     });
   });
 
-  describe('claimRewards', () => {
-    it('should successfully claim rewards', async () => {
+  describe('getVeOceanRewards', () => {
+    it('should get veOCEAN rewards successfully', async () => {
       const mockResponse = {
-        transactionId: '0x456',
-        claimedAmount: '100',
+        totalRewards: '500000000000000000',
+        claimableRewards: '200000000000000000',
+        pendingRewards: '300000000000000000'
       };
 
-      mockExecuteFunctions.getNodeParameter.mockImplementation((paramName: string) => {
-        switch (paramName) {
-          case 'operation': return 'claimRewards';
-          case 'did': return 'did:op:123';
-          case 'consumerAddress': return '0xConsumerAddress123';
-          default: return undefined;
-        }
-      });
+      mockExecuteFunctions.getNodeParameter
+        .mockReturnValueOnce('getVeOceanRewards')
+        .mockReturnValueOnce('0x123...abc')
+        .mockReturnValueOnce('1');
 
       mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-      const result = await executeVeOceanOperations.call(mockExecuteFunctions, [{ json: {} }]);
+      const result = await executeVeOceanOperations.call(
+        mockExecuteFunctions,
+        [{ json: {} }]
+      );
 
       expect(result).toEqual([{
         json: mockResponse,
-        pairedItem: { item: 0 },
+        pairedItem: { item: 0 }
       }]);
+    });
+  });
 
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'POST',
-        url: 'https://v4.aquarius.oceanprotocol.com/api/aquarius/assets/ddo/did:op:123/order',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: {
-          consumerAddress: '0xConsumerAddress123',
-        },
-        json: true,
-      });
+  describe('claimVeOceanRewards', () => {
+    it('should claim veOCEAN rewards successfully', async () => {
+      const mockResponse = {
+        success: true,
+        claimedAmount: '200000000000000000',
+        transactionHash: '0xdef456'
+      };
+
+      mockExecuteFunctions.getNodeParameter
+        .mockReturnValueOnce('claimVeOceanRewards')
+        .mockReturnValueOnce('0x123...abc')
+        .mockReturnValueOnce('100000000000000000,100000000000000000')
+        .mockReturnValueOnce('1');
+
+      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+      const result = await executeVeOceanOperations.call(
+        mockExecuteFunctions,
+        [{ json: {} }]
+      );
+
+      expect(result).toEqual([{
+        json: mockResponse,
+        pairedItem: { item: 0 }
+      }]);
+    });
+  });
+
+  describe('getAllVeOceanAllocations', () => {
+    it('should get all veOCEAN allocations successfully', async () => {
+      const mockResponse = {
+        allocations: [
+          {
+            user: '0x123...abc',
+            allocation: '1000000000000000000',
+            epoch: 123
+          }
+        ],
+        totalAllocated: '5000000000000000000'
+      };
+
+      mockExecuteFunctions.getNodeParameter
+        .mockReturnValueOnce('getAllVeOceanAllocations')
+        .mockReturnValueOnce('1')
+        .mockReturnValueOnce(0);
+
+      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+      const result = await executeVeOceanOperations.call(
+        mockExecuteFunctions,
+        [{ json: {} }]
+      );
+
+      expect(result).toEqual([{
+        json: mockResponse,
+        pairedItem: { item: 0 }
+      }]);
     });
   });
 });
 
-describe('AssetMetadata Resource', () => {
-  let mockExecuteFunctions: any;
+describe('Order Resource', () => {
+	let mockExecuteFunctions: any;
 
-  beforeEach(() => {
-    mockExecuteFunctions = {
-      getNodeParameter: jest.fn(),
-      getCredentials: jest.fn().mockResolvedValue({
-        apiKey: 'test-api-key',
-        baseUrl: 'https://v4.aquarius.oceanprotocol.com',
-      }),
-      getInputData: jest.fn().mockReturnValue([{ json: {} }]),
-      getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
-      continueOnFail: jest.fn().mockReturnValue(false),
-      helpers: {
-        httpRequest: jest.fn(),
-        requestWithAuthentication: jest.fn(),
-      },
-    };
-  });
+	beforeEach(() => {
+		mockExecuteFunctions = {
+			getNodeParameter: jest.fn(),
+			getCredentials: jest.fn().mockResolvedValue({
+				apiKey: 'test-key',
+				baseUrl: 'https://v4.aquarius.oceanprotocol.com'
+			}),
+			getInputData: jest.fn().mockReturnValue([{ json: {} }]),
+			getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
+			continueOnFail: jest.fn().mockReturnValue(false),
+			helpers: {
+				httpRequest: jest.fn(),
+				requestWithAuthentication: jest.fn(),
+			},
+		};
+	});
 
-  describe('getMetadata operation', () => {
-    it('should retrieve asset metadata by DID successfully', async () => {
-      const mockResponse = {
-        '@context': ['https://w3id.org/did/v1'],
-        id: 'did:op:test123',
-        name: 'Test Asset',
-        description: 'A test asset'
-      };
+	it('should create order successfully', async () => {
+		mockExecuteFunctions.getNodeParameter
+			.mockReturnValueOnce('createOrder')
+			.mockReturnValueOnce('test-document-id')
+			.mockReturnValueOnce('test-service-id')
+			.mockReturnValueOnce('0x123456789')
+			.mockReturnValueOnce('signature-data');
 
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        if (param === 'operation') return 'getMetadata';
-        if (param === 'did') return 'did:op:test123';
-        return undefined;
-      });
+		mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({
+			orderId: 'order-123',
+			status: 'pending',
+		});
 
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+		const result = await executeOrderOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-      const result = await executeAssetMetadataOperations.call(
-        mockExecuteFunctions,
-        [{ json: {} }]
-      );
+		expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+			method: 'POST',
+			url: 'https://v4.aquarius.oceanprotocol.com/api/services/order',
+			headers: {
+				'Authorization': 'Bearer test-key',
+				'Content-Type': 'application/json',
+			},
+			json: true,
+			body: {
+				documentId: 'test-document-id',
+				serviceId: 'test-service-id',
+				consumerAddress: '0x123456789',
+				signature: 'signature-data',
+			},
+		});
 
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'GET',
-        url: 'https://v4.aquarius.oceanprotocol.com/api/aquarius/assets/metadata/did:op:test123',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        json: true,
-      });
+		expect(result).toEqual([{
+			json: { orderId: 'order-123', status: 'pending' },
+			pairedItem: { item: 0 },
+		}]);
+	});
 
-      expect(result).toEqual([{
-        json: mockResponse,
-        pairedItem: { item: 0 }
-      }]);
-    });
-  });
+	it('should get order by transaction ID successfully', async () => {
+		mockExecuteFunctions.getNodeParameter
+			.mockReturnValueOnce('getOrder')
+			.mockReturnValueOnce('tx-12345');
 
-  describe('searchMetadata operation', () => {
-    it('should search metadata with filters successfully', async () => {
-      const mockResponse = {
-        results: [
-          { id: 'did:op:test1', name: 'Asset 1' },
-          { id: 'did:op:test2', name: 'Asset 2' }
-        ],
-        totalResults: 2
-      };
+		mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({
+			txId: 'tx-12345',
+			status: 'completed',
+		});
 
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        if (param === 'operation') return 'searchMetadata';
-        if (param === 'query') return '{"query": {"match_all": {}}}';
-        if (param === 'filters') return '{"chainId": 1}';
-        if (param === 'sort') return '{"created": "desc"}';
-        return undefined;
-      });
+		const result = await executeOrderOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+		expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+			method: 'GET',
+			url: 'https://v4.aquarius.oceanprotocol.com/api/services/order/tx-12345',
+			headers: {
+				'Authorization': 'Bearer test-key',
+			},
+			json: true,
+		});
 
-      const result = await executeAssetMetadataOperations.call(
-        mockExecuteFunctions,
-        [{ json: {} }]
-      );
+		expect(result).toEqual([{
+			json: { txId: 'tx-12345', status: 'completed' },
+			pairedItem: { item: 0 },
+		}]);
+	});
 
-      expect(result).toEqual([{
-        json: mockResponse,
-        pairedItem: { item: 0 }
-      }]);
-    });
-  });
+	it('should get all orders for consumer successfully', async () => {
+		mockExecuteFunctions.getNodeParameter
+			.mockReturnValueOnce('getAllOrders')
+			.mockReturnValueOnce('0x123456789')
+			.mockReturnValueOnce(1)
+			.mockReturnValueOnce(0);
 
-  describe('validateAssetName operation', () => {
-    it('should validate asset name availability successfully', async () => {
-      const mockResponse = {
-        available: true,
-        name: 'test-asset-name'
-      };
+		mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({
+			orders: [{ orderId: 'order-1' }, { orderId: 'order-2' }],
+			total: 2,
+		});
 
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        if (param === 'operation') return 'validateAssetName';
-        if (param === 'name') return 'test-asset-name';
-        return undefined;
-      });
+		const result = await executeOrderOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+		expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+			method: 'GET',
+			url: 'https://v4.aquarius.oceanprotocol.com/api/services/orders/0x123456789',
+			headers: {
+				'Authorization': 'Bearer test-key',
+			},
+			qs: {
+				page: 1,
+				offset: 0,
+			},
+			json: true,
+		});
 
-      const result = await executeAssetMetadataOperations.call(
-        mockExecuteFunctions,
-        [{ json: {} }]
-      );
+		expect(result).toEqual([{
+			json: { orders: [{ orderId: 'order-1' }, { orderId: 'order-2' }], total: 2 },
+			pairedItem: { item: 0 },
+		}]);
+	});
 
-      expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
-        method: 'GET',
-        url: 'https://v4.aquarius.oceanprotocol.com/api/aquarius/assets/names',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        qs: {
-          name: 'test-asset-name',
-        },
-        json: true,
-      });
+	it('should download asset successfully', async () => {
+		mockExecuteFunctions.getNodeParameter
+			.mockReturnValueOnce('downloadAsset')
+			.mockReturnValueOnce('test-document-id')
+			.mockReturnValueOnce('test-service-id')
+			.mockReturnValueOnce(0)
+			.mockReturnValueOnce('signature-data');
 
-      expect(result).toEqual([{
-        json: mockResponse,
-        pairedItem: { item: 0 }
-      }]);
-    });
-  });
+		mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({
+			downloadUrl: 'https://download-url.com/file',
+		});
 
-  describe('getSupportedChains operation', () => {
-    it('should get supported chains successfully', async () => {
-      const mockResponse = [
-        { chainId: 1, name: 'Ethereum Mainnet' },
-        { chainId: 137, name: 'Polygon' }
-      ];
+		const result = await executeOrderOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        if (param === 'operation') return 'getSupportedChains';
-        return undefined;
-      });
+		expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+			method: 'POST',
+			url: 'https://v4.aquarius.oceanprotocol.com/api/services/download',
+			headers: {
+				'Authorization': 'Bearer test-key',
+				'Content-Type': 'application/json',
+			},
+			json: true,
+			body: {
+				documentId: 'test-document-id',
+				serviceId: 'test-service-id',
+				fileIndex: 0,
+				signature: 'signature-data',
+			},
+		});
 
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+		expect(result).toEqual([{
+			json: { downloadUrl: 'https://download-url.com/file' },
+			pairedItem: { item: 0 },
+		}]);
+	});
 
-      const result = await executeAssetMetadataOperations.call(
-        mockExecuteFunctions,
-        [{ json: {} }]
-      );
+	it('should initialize asset successfully', async () => {
+		mockExecuteFunctions.getNodeParameter
+			.mockReturnValueOnce('initializeAsset')
+			.mockReturnValueOnce('test-document-id')
+			.mockReturnValueOnce('test-service-id')
+			.mockReturnValueOnce('signature-data')
+			.mockReturnValueOnce('0x123456789');
 
-      expect(result).toEqual([{
-        json: mockResponse,
-        pairedItem: { item: 0 }
-      }]);
-    });
-  });
+		mockExecuteFunctions.helpers.httpRequest.mockResolvedValue({
+			initialized: true,
+			serviceEndpoint: 'https://service-endpoint.com',
+		});
 
-  describe('getProtocolStats operation', () => {
-    it('should get protocol statistics successfully', async () => {
-      const mockResponse = {
-        totalAssets: 1000,
-        totalTransactions: 5000,
-        totalVolume: '100000'
-      };
+		const result = await executeOrderOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        if (param === 'operation') return 'getProtocolStats';
-        if (param === 'chainIds') return '1,137';
-        return undefined;
-      });
+		expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+			method: 'POST',
+			url: 'https://v4.aquarius.oceanprotocol.com/api/services/initialize',
+			headers: {
+				'Authorization': 'Bearer test-key',
+				'Content-Type': 'application/json',
+			},
+			json: true,
+			body: {
+				documentId: 'test-document-id',
+				serviceId: 'test-service-id',
+				signature: 'signature-data',
+				consumerAddress: '0x123456789',
+			},
+		});
 
-      mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+		expect(result).toEqual([{
+			json: { initialized: true, serviceEndpoint: 'https://service-endpoint.com' },
+			pairedItem: { item: 0 },
+		}]);
+	});
 
-      const result = await executeAssetMetadataOperations.call(
-        mockExecuteFunctions,
-        [{ json: {} }]
-      );
+	it('should handle API errors when continueOnFail is true', async () => {
+		mockExecuteFunctions.getNodeParameter.mockReturnValueOnce('createOrder');
+		mockExecuteFunctions.continueOnFail.mockReturnValue(true);
+		mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
 
-      expect(result).toEqual([{
-        json: mockResponse,
-        pairedItem: { item: 0 }
-      }]);
-    });
-  });
+		const result = await executeOrderOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-  describe('error handling', () => {
-    it('should handle API errors correctly', async () => {
-      const error = new Error('API Error');
-      (error as any).httpCode = 404;
+		expect(result).toEqual([{
+			json: { error: 'API Error' },
+			pairedItem: { item: 0 },
+		}]);
+	});
 
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        if (param === 'operation') return 'getMetadata';
-        if (param === 'did') return 'invalid-did';
-        return undefined;
-      });
+	it('should throw error for unknown operation', async () => {
+		mockExecuteFunctions.getNodeParameter.mockReturnValueOnce('unknownOperation');
 
-      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(error);
+		await expect(executeOrderOperations.call(mockExecuteFunctions, [{ json: {} }]))
+			.rejects.toThrow('Unknown operation: unknownOperation');
+	});
+});
 
-      await expect(executeAssetMetadataOperations.call(
-        mockExecuteFunctions,
-        [{ json: {} }]
-      )).rejects.toThrow('API Error');
-    });
+describe('Provider Resource', () => {
+	let mockExecuteFunctions: any;
 
-    it('should continue on fail when configured', async () => {
-      const error = new Error('API Error');
-      
-      mockExecuteFunctions.continueOnFail.mockReturnValue(true);
-      mockExecuteFunctions.getNodeParameter.mockImplementation((param: string) => {
-        if (param === 'operation') return 'getMetadata';
-        if (param === 'did') return 'invalid-did';
-        return undefined;
-      });
+	beforeEach(() => {
+		mockExecuteFunctions = {
+			getNodeParameter: jest.fn(),
+			getCredentials: jest.fn().mockResolvedValue({
+				apiKey: 'test-key',
+				baseUrl: 'https://v4.aquarius.oceanprotocol.com',
+			}),
+			getInputData: jest.fn().mockReturnValue([{ json: {} }]),
+			getNode: jest.fn().mockReturnValue({ name: 'Test Node' }),
+			continueOnFail: jest.fn().mockReturnValue(false),
+			helpers: {
+				httpRequest: jest.fn(),
+				requestWithAuthentication: jest.fn(),
+			},
+		};
+	});
 
-      mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(error);
+	describe('getProvider operation', () => {
+		it('should get provider service information successfully', async () => {
+			const mockResponse = { status: 'active', version: '1.0.0' };
+			mockExecuteFunctions.getNodeParameter.mockReturnValue('getProvider');
+			mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
 
-      const result = await executeAssetMetadataOperations.call(
-        mockExecuteFunctions,
-        [{ json: {} }]
-      );
+			const result = await executeProviderOperations.call(mockExecuteFunctions, [{ json: {} }]);
 
-      expect(result).toEqual([{
-        json: {
-          error: 'API Error',
-          operation: 'getMetadata',
-          item: 0
-        },
-        pairedItem: { item: 0 }
-      }]);
-    });
-  });
+			expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+				method: 'GET',
+				url: 'https://v4.aquarius.oceanprotocol.com/api/services/provider',
+				headers: {
+					'Authorization': 'Bearer test-key',
+					'Content-Type': 'application/json',
+				},
+				json: true,
+			});
+			expect(result[0].json).toEqual(mockResponse);
+		});
+
+		it('should handle getProvider error', async () => {
+			mockExecuteFunctions.getNodeParameter.mockReturnValue('getProvider');
+			mockExecuteFunctions.helpers.httpRequest.mockRejectedValue(new Error('API Error'));
+			mockExecuteFunctions.continueOnFail.mockReturnValue(true);
+
+			const result = await executeProviderOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+			expect(result[0].json.error).toBe('API Error');
+		});
+	});
+
+	describe('encryptData operation', () => {
+		it('should encrypt data successfully', async () => {
+			const mockResponse = { encryptedData: 'encrypted_content', hash: 'data_hash' };
+			mockExecuteFunctions.getNodeParameter
+				.mockReturnValueOnce('encryptData')
+				.mockReturnValueOnce('doc123')
+				.mockReturnValueOnce('signature123')
+				.mockReturnValueOnce({ content: 'test data' });
+			mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+			const result = await executeProviderOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+			expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+				method: 'POST',
+				url: 'https://v4.aquarius.oceanprotocol.com/api/services/encrypt',
+				headers: {
+					'Authorization': 'Bearer test-key',
+					'Content-Type': 'application/json',
+				},
+				body: {
+					documentId: 'doc123',
+					signature: 'signature123',
+					document: { content: 'test data' },
+				},
+				json: true,
+			});
+			expect(result[0].json).toEqual(mockResponse);
+		});
+	});
+
+	describe('getFileInfo operation', () => {
+		it('should get file information successfully', async () => {
+			const mockResponse = { fileSize: 1024, contentType: 'application/json' };
+			mockExecuteFunctions.getNodeParameter
+				.mockReturnValueOnce('getFileInfo')
+				.mockReturnValueOnce('did:op:123')
+				.mockReturnValueOnce('service1')
+				.mockReturnValueOnce('signature123');
+			mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+			const result = await executeProviderOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+			expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+				method: 'POST',
+				url: 'https://v4.aquarius.oceanprotocol.com/api/services/fileinfo',
+				headers: {
+					'Authorization': 'Bearer test-key',
+					'Content-Type': 'application/json',
+				},
+				body: {
+					did: 'did:op:123',
+					serviceId: 'service1',
+					signature: 'signature123',
+				},
+				json: true,
+			});
+			expect(result[0].json).toEqual(mockResponse);
+		});
+	});
+
+	describe('getNonce operation', () => {
+		it('should get nonce successfully', async () => {
+			const mockResponse = { nonce: 'abc123' };
+			mockExecuteFunctions.getNodeParameter
+				.mockReturnValueOnce('getNonce')
+				.mockReturnValueOnce('0x1234567890123456789012345678901234567890');
+			mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+			const result = await executeProviderOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+			expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+				method: 'GET',
+				url: 'https://v4.aquarius.oceanprotocol.com/api/services/nonce',
+				headers: {
+					'Authorization': 'Bearer test-key',
+					'Content-Type': 'application/json',
+				},
+				qs: {
+					userAddress: '0x1234567890123456789012345678901234567890',
+				},
+				json: true,
+			});
+			expect(result[0].json).toEqual(mockResponse);
+		});
+	});
+
+	describe('validateAsset operation', () => {
+		it('should validate asset successfully', async () => {
+			const mockResponse = { valid: true, accessible: true };
+			mockExecuteFunctions.getNodeParameter
+				.mockReturnValueOnce('validateAsset')
+				.mockReturnValueOnce('did:op:123')
+				.mockReturnValueOnce('signature123');
+			mockExecuteFunctions.helpers.httpRequest.mockResolvedValue(mockResponse);
+
+			const result = await executeProviderOperations.call(mockExecuteFunctions, [{ json: {} }]);
+
+			expect(mockExecuteFunctions.helpers.httpRequest).toHaveBeenCalledWith({
+				method: 'POST',
+				url: 'https://v4.aquarius.oceanprotocol.com/api/services/validate',
+				headers: {
+					'Authorization': 'Bearer test-key',
+					'Content-Type': 'application/json',
+				},
+				body: {
+					did: 'did:op:123',
+					signature: 'signature123',
+				},
+				json: true,
+			});
+			expect(result[0].json).toEqual(mockResponse);
+		});
+	});
 });
 });
