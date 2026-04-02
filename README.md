@@ -8,25 +8,25 @@
 >
 > For licensing information, visit https://velobpa.com/licensing or contact licensing@velobpa.com.
 
-This n8n community node provides seamless integration with Ocean Protocol's decentralized data ecosystem, offering 5 comprehensive resources for managing data NFTs, datatokens, compute-to-data operations, governance tokens, and asset metadata with full Web3 capabilities.
+A comprehensive n8n community node for Ocean Protocol, enabling seamless automation of decentralized data marketplace operations. This node provides access to 6 key resources including assets, datatokens, compute jobs, veOcean governance, orders, and providers, allowing you to build powerful Web3 data workflows within n8n.
 
 ![n8n Community Node](https://img.shields.io/badge/n8n-Community%20Node-blue)
 ![License](https://img.shields.io/badge/license-BSL--1.1-blue)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)
-![Ocean Protocol](https://img.shields.io/badge/Ocean%20Protocol-v4-0891b2)
-![Web3](https://img.shields.io/badge/Web3-Enabled-green)
-![DeFi](https://img.shields.io/badge/DeFi-Compatible-purple)
+![Ocean Protocol](https://img.shields.io/badge/Ocean%20Protocol-Compatible-0891b2)
+![Web3](https://img.shields.io/badge/Web3-Enabled-orange)
+![Data Marketplace](https://img.shields.io/badge/Data-Marketplace-green)
 
 ## Features
 
-- **DataNFT Management** - Create, mint, transfer, and manage data NFTs with full ownership control
-- **Datatoken Operations** - Deploy, mint, burn, and transfer datatokens for data access monetization
-- **Compute-to-Data Integration** - Execute privacy-preserving computations on remote datasets
-- **VeOcean Governance** - Stake OCEAN tokens, participate in governance, and earn rewards
-- **Asset Metadata Handling** - Create, update, and retrieve comprehensive dataset metadata
-- **Multi-Chain Support** - Works across Ethereum, Polygon, BSC, and other supported networks
-- **Real-time Monitoring** - Track transaction status and blockchain confirmations
-- **Batch Processing** - Handle multiple operations efficiently in single workflows
+- **Asset Management** - Create, update, publish, and discover data assets in the Ocean Protocol ecosystem
+- **Datatoken Operations** - Mint, transfer, and manage ERC-20 datatokens for data access control
+- **Compute-to-Data** - Execute privacy-preserving computations on distributed datasets
+- **veOcean Governance** - Participate in Ocean Protocol governance through veOcean token operations
+- **Order Processing** - Handle data asset purchases, downloads, and access management
+- **Provider Integration** - Interact with Ocean Protocol providers for data storage and compute services
+- **Multi-Network Support** - Compatible with Ethereum, Polygon, and other supported Ocean networks
+- **Enterprise Ready** - Built for production workflows with comprehensive error handling
 
 ## Installation
 
@@ -61,115 +61,146 @@ n8n start
 
 | Field | Description | Required |
 |-------|-------------|----------|
-| Private Key | Wallet private key for signing transactions | Yes |
-| Network | Target network (mainnet, polygon, rinkeby, mumbai) | Yes |
-| RPC URL | Custom RPC endpoint (optional, uses default if empty) | No |
-| API Key | Ocean Protocol API key for enhanced features | No |
+| API Key | Your Ocean Protocol API key for authentication | Yes |
+| Network | Target blockchain network (mainnet, polygon, etc.) | Yes |
+| Private Key | Wallet private key for transaction signing | Yes |
+| Provider URL | Ocean Protocol provider endpoint URL | No |
+| Aquarius URL | Metadata service endpoint URL | No |
 
 ## Resources & Operations
 
-### 1. DataNFTs
+### 1. Asset
 
 | Operation | Description |
 |-----------|-------------|
-| Create | Deploy a new DataNFT contract with custom metadata |
-| Mint | Mint new DataNFT tokens to specified addresses |
-| Transfer | Transfer DataNFT ownership between addresses |
-| Get Details | Retrieve DataNFT contract information and metadata |
-| Set Metadata | Update DataNFT metadata and description |
-| List Tokens | Get all DataNFTs owned by an address |
+| Create | Create a new data asset with metadata and pricing |
+| Get | Retrieve asset details by DID or address |
+| Update | Update asset metadata and configuration |
+| Publish | Publish an asset to make it discoverable |
+| Search | Search for assets using filters and keywords |
+| Delete | Remove an asset from the marketplace |
 
-### 2. Datatokens
+### 2. Datatoken
 
 | Operation | Description |
 |-----------|-------------|
-| Deploy | Create new datatoken contract linked to DataNFT |
-| Mint | Mint datatokens for data access distribution |
+| Create | Deploy a new datatoken contract |
+| Mint | Mint new datatoken supply |
+| Transfer | Transfer datatokens between addresses |
 | Burn | Burn datatokens to reduce supply |
-| Transfer | Send datatokens between addresses |
-| Approve | Approve spending allowance for another address |
-| Get Balance | Check datatoken balance for specific address |
-| Get Supply | Retrieve total and circulating supply information |
+| Get Balance | Check datatoken balance for an address |
+| Approve | Approve spending allowance for datatokens |
 
-### 3. ComputeToData
+### 3. ComputeJob
 
 | Operation | Description |
 |-----------|-------------|
-| Start Job | Initialize compute job on remote dataset |
-| Get Job Status | Check status and progress of running jobs |
-| Get Results | Retrieve computation results and outputs |
-| Cancel Job | Stop running compute job |
-| List Jobs | Get all compute jobs for user or dataset |
-| Get Algorithms | Retrieve available algorithms for computation |
+| Start | Initiate a compute-to-data job |
+| Get Status | Check the status of a running job |
+| Get Results | Retrieve completed job results |
+| Stop | Cancel a running compute job |
+| Get Logs | Fetch execution logs for debugging |
+| List Jobs | Get all jobs for a user or dataset |
 
 ### 4. VeOcean
 
 | Operation | Description |
 |-----------|-------------|
-| Lock Tokens | Lock OCEAN tokens for veOCEAN governance power |
-| Unlock Tokens | Unlock previously locked OCEAN tokens |
-| Get Balance | Check veOCEAN balance and voting power |
-| Claim Rewards | Claim available staking rewards |
-| Vote | Participate in Ocean Protocol governance voting |
-| Get Proposals | Retrieve active and past governance proposals |
+| Lock | Lock OCEAN tokens to receive veOcean |
+| Unlock | Unlock OCEAN tokens after lock period |
+| Get Balance | Check veOcean balance and lock details |
+| Delegate | Delegate veOcean voting power |
+| Vote | Cast votes on governance proposals |
+| Get Rewards | Claim data farming and governance rewards |
 
-### 5. AssetMetadata
+### 5. Order
 
 | Operation | Description |
 |-----------|-------------|
-| Create | Create comprehensive metadata for data assets |
-| Update | Modify existing asset metadata and properties |
-| Get | Retrieve complete metadata for specific asset |
-| Search | Search assets by metadata criteria |
-| Validate | Validate metadata structure and compliance |
-| Delete | Remove asset metadata from registry |
+| Create | Place an order to access a data asset |
+| Get | Retrieve order details and status |
+| Download | Download purchased data asset |
+| Get History | View order history for an account |
+| Cancel | Cancel a pending order |
+| Validate | Validate order requirements before purchase |
+
+### 6. Provider
+
+| Operation | Description |
+|-----------|-------------|
+| Get Info | Retrieve provider service information |
+| Check Status | Check provider health and availability |
+| Get Services | List available provider services |
+| Validate | Validate provider compatibility |
+| Get Endpoints | Retrieve provider API endpoints |
+| Test Connection | Test connectivity to provider services |
 
 ## Usage Examples
 
 ```javascript
-// Create a new DataNFT for climate data
+// Create a new data asset
 {
-  "name": "Climate Research Dataset",
-  "symbol": "CLIMATE",
-  "templateIndex": 1,
-  "tokenURI": "https://metadata.oceanprotocol.com/climate-data.json",
-  "transferable": true,
-  "owner": "0x742d35Cc6634C0532925a3b8D1b9173A38d07279"
+  "metadata": {
+    "name": "Weather Data 2024",
+    "description": "Comprehensive weather dataset for machine learning",
+    "type": "dataset",
+    "author": "WeatherCorp",
+    "license": "CC-BY-4.0"
+  },
+  "pricing": {
+    "type": "fixed",
+    "price": "10",
+    "token": "OCEAN"
+  },
+  "files": [{
+    "url": "https://example.com/weather-data.csv",
+    "contentType": "text/csv"
+  }]
 }
 ```
 
 ```javascript
-// Deploy datatoken for dataset access
+// Start a compute-to-data job
 {
-  "name": "Climate Data Access Token",
-  "symbol": "CDAT",
-  "templateIndex": 1,
-  "cap": "1000000",
-  "feeAmount": "0.1",
-  "paymentCollector": "0x123...abc",
-  "feeToken": "0x967da4048cD07aB37855c090aAF366e4ce1b9F48"
+  "dataset": "did:op:123abc456def",
+  "algorithm": "did:op:789ghi012jkl",
+  "compute": {
+    "env": "python",
+    "resources": {
+      "cpu": 2,
+      "memory": "4GB",
+      "storage": "10GB"
+    }
+  },
+  "additionalDatasets": [
+    "did:op:345mno678pqr"
+  ]
 }
 ```
 
 ```javascript
-// Start compute-to-data job
+// Search for data assets
 {
-  "dataset": "0x456...def",
-  "algorithm": "0x789...ghi",
-  "computeEnv": "ocean-compute-env-1",
-  "parameters": {
-    "epochs": 100,
-    "learning_rate": 0.001
-  }
+  "query": "machine learning",
+  "filters": {
+    "categories": ["AI", "datasets"],
+    "priceRange": {
+      "min": 0,
+      "max": 100
+    },
+    "license": ["CC-BY", "CC0"]
+  },
+  "sort": "created",
+  "limit": 20
 }
 ```
 
 ```javascript
-// Lock OCEAN tokens for governance
+// Lock OCEAN tokens for veOcean
 {
   "amount": "1000",
-  "lockDuration": 31536000,
-  "recipient": "0x742d35Cc6634C0532925a3b8D1b9173A38d07279"
+  "lockPeriod": "4", // 4 years for maximum veOcean
+  "recipient": "0x742d35Cc6635C0532925a3b8D657E3a8A1234567"
 }
 ```
 
@@ -177,12 +208,12 @@ n8n start
 
 | Error | Description | Solution |
 |-------|-------------|----------|
-| Insufficient Balance | Not enough tokens for transaction | Check token balance and top up wallet |
-| Invalid Private Key | Wallet authentication failed | Verify private key format and permissions |
-| Network Timeout | RPC endpoint not responding | Switch to different RPC URL or retry |
-| Contract Not Found | Asset or contract doesn't exist | Verify contract address and network |
-| Transaction Failed | Blockchain transaction reverted | Check gas limits and contract state |
-| Metadata Invalid | Asset metadata doesn't meet schema | Validate metadata against Ocean Protocol standards |
+| Invalid DID Format | Provided DID doesn't match Ocean Protocol format | Ensure DID follows 'did:op:' format with valid checksum |
+| Insufficient Balance | Not enough tokens for transaction | Check wallet balance and ensure sufficient OCEAN tokens |
+| Provider Unreachable | Cannot connect to Ocean Protocol provider | Verify provider URL and network connectivity |
+| Compute Job Failed | Compute-to-data execution failed | Check algorithm compatibility and dataset permissions |
+| Asset Not Found | Requested asset doesn't exist | Verify asset DID and ensure asset is published |
+| Network Mismatch | Wrong blockchain network configured | Ensure network setting matches asset's deployment network |
 
 ## Development
 
@@ -228,4 +259,4 @@ Contributions are welcome! Please ensure:
 
 - **Issues**: [GitHub Issues](https://github.com/Velocity-BPA/n8n-nodes-ocean-protocol/issues)
 - **Ocean Protocol Docs**: [Ocean Protocol Documentation](https://docs.oceanprotocol.com/)
-- **Ocean Discord**: [Ocean Protocol Community](https://discord.gg/TnXjkR5)
+- **Ocean Community**: [Ocean Protocol Discord](https://discord.com/invite/TnXjkR5)
