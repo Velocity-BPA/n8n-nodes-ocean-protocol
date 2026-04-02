@@ -41,7 +41,6 @@ export class OceanProtocol implements INodeType {
       },
     ],
     properties: [
-      // Resource selector
       {
         displayName: 'Resource',
         name: 'resource',
@@ -49,256 +48,278 @@ export class OceanProtocol implements INodeType {
         noDataExpression: true,
         options: [
           {
-            name: 'DataNFTs',
-            value: 'dataNFTs',
+            name: 'Asset',
+            value: 'asset',
           },
           {
-            name: 'Datatokens',
-            value: 'datatokens',
+            name: 'Datatoken',
+            value: 'datatoken',
           },
           {
-            name: 'ComputeToData',
-            value: 'computeToData',
+            name: 'ComputeJob',
+            value: 'computeJob',
           },
           {
             name: 'VeOcean',
             value: 'veOcean',
           },
           {
-            name: 'AssetMetadata',
-            value: 'assetMetadata',
+            name: 'Order',
+            value: 'order',
+          },
+          {
+            name: 'Provider',
+            value: 'provider',
           }
         ],
-        default: 'dataNFTs',
+        default: 'asset',
       },
-      // Operation dropdowns per resource
 {
   displayName: 'Operation',
   name: 'operation',
   type: 'options',
   noDataExpression: true,
-  displayOptions: {
-    show: {
-      resource: ['dataNFTs'],
-    },
-  },
+  displayOptions: { show: { resource: ['asset'] } },
   options: [
-    {
-      name: 'Create Data NFT',
-      value: 'createDataNFT',
-      description: 'Create a new Data NFT with metadata',
-      action: 'Create data NFT',
-    },
-    {
-      name: 'Get Data NFT',
-      value: 'getDataNFT',
-      description: 'Retrieve Data NFT metadata by DID',
-      action: 'Get data NFT',
-    },
-    {
-      name: 'Search Data NFTs',
-      value: 'searchDataNFTs',
-      description: 'Search and filter Data NFTs',
-      action: 'Search data NFTs',
-    },
-    {
-      name: 'Update Data NFT',
-      value: 'updateDataNFT',
-      description: 'Update Data NFT metadata',
-      action: 'Update data NFT',
-    },
-    {
-      name: 'Delete Data NFT',
-      value: 'deleteDataNFT',
-      description: 'Remove Data NFT from registry',
-      action: 'Delete data NFT',
-    },
+    { name: 'Create Asset', value: 'createAsset', description: 'Create a new data asset with metadata', action: 'Create asset' },
+    { name: 'Get Asset', value: 'getAsset', description: 'Retrieve asset details by DID', action: 'Get asset' },
+    { name: 'Get All Assets', value: 'getAllAssets', description: 'List all available assets with pagination', action: 'Get all assets' },
+    { name: 'Update Asset', value: 'updateAsset', description: 'Update asset metadata and services', action: 'Update asset' },
+    { name: 'Delete Asset', value: 'deleteAsset', description: 'Remove asset from registry', action: 'Delete asset' },
+    { name: 'Query Assets', value: 'queryAssets', description: 'Search assets using Elasticsearch query', action: 'Query assets' }
   ],
-  default: 'createDataNFT',
+  default: 'createAsset',
+},
+{
+	displayName: 'Operation',
+	name: 'operation',
+	type: 'options',
+	noDataExpression: true,
+	displayOptions: {
+		show: {
+			resource: ['datatoken'],
+		},
+	},
+	options: [
+		{
+			name: 'Create Datatoken',
+			value: 'createDatatoken',
+			description: 'Create a new datatoken for an asset',
+			action: 'Create a datatoken',
+		},
+		{
+			name: 'Get Datatoken',
+			value: 'getDatatoken',
+			description: 'Get datatoken details by contract address',
+			action: 'Get a datatoken',
+		},
+		{
+			name: 'Get All Datatokens',
+			value: 'getAllDatatokens',
+			description: 'List all datatokens with filtering',
+			action: 'Get all datatokens',
+		},
+		{
+			name: 'Update Datatoken',
+			value: 'updateDatatoken',
+			description: 'Update datatoken properties',
+			action: 'Update a datatoken',
+		},
+		{
+			name: 'Mint Datatoken',
+			value: 'mintDatatoken',
+			description: 'Mint datatoken to specified address',
+			action: 'Mint a datatoken',
+		},
+	],
+	default: 'createDatatoken',
+},
+{
+	displayName: 'Operation',
+	name: 'operation',
+	type: 'options',
+	noDataExpression: true,
+	displayOptions: {
+		show: {
+			resource: ['computeJob'],
+		},
+	},
+	options: [
+		{
+			name: 'Create Compute Job',
+			value: 'createComputeJob',
+			description: 'Start a new compute job for privacy-preserving data processing',
+			action: 'Create compute job',
+		},
+		{
+			name: 'Get Compute Job',
+			value: 'getComputeJob',
+			description: 'Get compute job status and details',
+			action: 'Get compute job',
+		},
+		{
+			name: 'Get All Compute Jobs',
+			value: 'getAllComputeJobs',
+			description: 'List all compute jobs for consumer',
+			action: 'Get all compute jobs',
+		},
+		{
+			name: 'Update Compute Job',
+			value: 'updateComputeJob',
+			description: 'Stop or restart a compute job',
+			action: 'Update compute job',
+		},
+		{
+			name: 'Delete Compute Job',
+			value: 'deleteComputeJob',
+			description: 'Delete compute job and results',
+			action: 'Delete compute job',
+		},
+	],
+	default: 'createComputeJob',
 },
 {
   displayName: 'Operation',
   name: 'operation',
   type: 'options',
   noDataExpression: true,
-  displayOptions: {
-    show: {
-      resource: ['datatokens'],
-    },
-  },
+  displayOptions: { show: { resource: ['veOcean'] } },
   options: [
     {
-      name: 'Create Datatoken',
-      value: 'createDatatoken',
-      description: 'Create datatoken for data access',
-      action: 'Create datatoken',
+      name: 'Get veOCEAN Locks',
+      value: 'getVeOceanLocks',
+      description: 'Get user\'s veOCEAN lock details',
+      action: 'Get veOCEAN locks'
     },
     {
-      name: 'Get Datatoken',
-      value: 'getDatatoken',
-      description: 'Get datatoken details by DID',
-      action: 'Get datatoken details',
+      name: 'Create veOCEAN Lock',
+      value: 'createVeOceanLock',
+      description: 'Lock OCEAN tokens to get veOCEAN',
+      action: 'Create veOCEAN lock'
     },
     {
-      name: 'Search Datatokens',
-      value: 'searchDatatokens',
-      description: 'Query datatokens by various criteria',
-      action: 'Search datatokens',
+      name: 'Get veOCEAN Rewards',
+      value: 'getVeOceanRewards',
+      description: 'Get user\'s veOCEAN rewards',
+      action: 'Get veOCEAN rewards'
     },
     {
-      name: 'Purchase Datatoken',
-      value: 'purchaseDatatoken',
-      description: 'Purchase datatoken access',
-      action: 'Purchase datatoken',
+      name: 'Claim veOCEAN Rewards',
+      value: 'claimVeOceanRewards',
+      description: 'Claim available veOCEAN rewards',
+      action: 'Claim veOCEAN rewards'
     },
     {
-      name: 'Get Compute Environments',
-      value: 'getComputeEnvironments',
-      description: 'Get available compute environments',
-      action: 'Get compute environments',
-    },
+      name: 'Get All veOCEAN Allocations',
+      value: 'getAllVeOceanAllocations',
+      description: 'Get all veOCEAN allocations for current epoch',
+      action: 'Get all veOCEAN allocations'
+    }
   ],
-  default: 'createDatatoken',
+  default: 'getVeOceanLocks'
 },
 {
-  displayName: 'Operation',
-  name: 'operation',
-  type: 'options',
-  noDataExpression: true,
-  displayOptions: {
-    show: {
-      resource: ['computeToData'],
-    },
-  },
-  options: [
-    {
-      name: 'Start Compute Job',
-      value: 'startComputeJob',
-      description: 'Start a compute-to-data job',
-      action: 'Start compute job',
-    },
-    {
-      name: 'Get Compute Jobs',
-      value: 'getComputeJobs',
-      description: 'List compute jobs for user',
-      action: 'Get compute jobs',
-    },
-    {
-      name: 'Get Compute Job',
-      value: 'getComputeJob',
-      description: 'Get specific compute job details',
-      action: 'Get compute job',
-    },
-    {
-      name: 'Stop Compute Job',
-      value: 'stopComputeJob',
-      description: 'Stop a running compute job',
-      action: 'Stop compute job',
-    },
-    {
-      name: 'Delete Compute Job',
-      value: 'deleteComputeJob',
-      description: 'Delete compute job and results',
-      action: 'Delete compute job',
-    },
-    {
-      name: 'Get Compute Results',
-      value: 'getComputeResults',
-      description: 'Download compute job results',
-      action: 'Get compute results',
-    },
-  ],
-  default: 'startComputeJob',
+	displayName: 'Operation',
+	name: 'operation',
+	type: 'options',
+	noDataExpression: true,
+	displayOptions: {
+		show: {
+			resource: ['order'],
+		},
+	},
+	options: [
+		{
+			name: 'Create Order',
+			value: 'createOrder',
+			description: 'Place order to access an asset',
+			action: 'Create an order',
+		},
+		{
+			name: 'Get Order',
+			value: 'getOrder',
+			description: 'Get order details by transaction ID',
+			action: 'Get an order',
+		},
+		{
+			name: 'Get All Orders',
+			value: 'getAllOrders',
+			description: 'List all orders for a consumer',
+			action: 'Get all orders',
+		},
+		{
+			name: 'Download Asset',
+			value: 'downloadAsset',
+			description: 'Download asset after successful order',
+			action: 'Download an asset',
+		},
+		{
+			name: 'Initialize Asset',
+			value: 'initializeAsset',
+			description: 'Initialize asset service for access',
+			action: 'Initialize an asset',
+		},
+	],
+	default: 'createOrder',
 },
 {
-  displayName: 'Operation',
-  name: 'operation',
-  type: 'options',
-  noDataExpression: true,
-  displayOptions: {
-    show: {
-      resource: ['veOcean'],
-    },
-  },
-  options: [
-    {
-      name: 'Get VeOcean Stats',
-      value: 'getVeOceanStats',
-      description: 'Query veOCEAN related statistics and allocations',
-      action: 'Get veOCEAN stats',
-    },
-    {
-      name: 'Allocate VeOcean',
-      value: 'allocateVeOcean',
-      description: 'Allocate veOCEAN to data assets',
-      action: 'Allocate veOCEAN',
-    },
-    {
-      name: 'Get VeOcean Allocations',
-      value: 'getVeOceanAllocations',
-      description: 'Get veOCEAN allocations for specific asset',
-      action: 'Get veOCEAN allocations',
-    },
-    {
-      name: 'Get Rewards',
-      value: 'getRewards',
-      description: 'Get rewards information for veOCEAN holders',
-      action: 'Get rewards',
-    },
-    {
-      name: 'Claim Rewards',
-      value: 'claimRewards',
-      description: 'Claim available rewards from veOCEAN allocations',
-      action: 'Claim rewards',
-    },
-  ],
-  default: 'getVeOceanStats',
+	displayName: 'Operation',
+	name: 'operation',
+	type: 'options',
+	noDataExpression: true,
+	displayOptions: {
+		show: {
+			resource: ['provider'],
+		},
+	},
+	options: [
+		{
+			name: 'Get Provider',
+			value: 'getProvider',
+			description: 'Get provider service information',
+			action: 'Get provider service information',
+		},
+		{
+			name: 'Encrypt Data',
+			value: 'encryptData',
+			description: 'Encrypt data for secure storage',
+			action: 'Encrypt data for secure storage',
+		},
+		{
+			name: 'Get File Info',
+			value: 'getFileInfo',
+			description: 'Get file information without downloading',
+			action: 'Get file information without downloading',
+		},
+		{
+			name: 'Get Nonce',
+			value: 'getNonce',
+			description: 'Get nonce for transaction signing',
+			action: 'Get nonce for transaction signing',
+		},
+		{
+			name: 'Validate Asset',
+			value: 'validateAsset',
+			description: 'Validate asset accessibility and metadata',
+			action: 'Validate asset accessibility and metadata',
+		},
+	],
+	default: 'getProvider',
 },
 {
-  displayName: 'Operation',
-  name: 'operation',
-  type: 'options',
-  noDataExpression: true,
+  displayName: 'DID',
+  name: 'did',
+  type: 'string',
+  required: true,
   displayOptions: {
     show: {
-      resource: ['assetMetadata'],
-    },
+      resource: ['asset'],
+      operation: ['createAsset']
+    }
   },
-  options: [
-    {
-      name: 'Get Metadata',
-      value: 'getMetadata',
-      description: 'Retrieve asset metadata by DID',
-      action: 'Get asset metadata',
-    },
-    {
-      name: 'Search Metadata',
-      value: 'searchMetadata',
-      description: 'Advanced metadata search with filters',
-      action: 'Search asset metadata',
-    },
-    {
-      name: 'Validate Asset Name',
-      value: 'validateAssetName',
-      description: 'Check asset name availability',
-      action: 'Validate asset name',
-    },
-    {
-      name: 'Get Supported Chains',
-      value: 'getSupportedChains',
-      description: 'Get list of supported blockchain networks',
-      action: 'Get supported chains',
-    },
-    {
-      name: 'Get Protocol Stats',
-      value: 'getProtocolStats',
-      description: 'Get Ocean Protocol network statistics',
-      action: 'Get protocol statistics',
-    },
-  ],
-  default: 'getMetadata',
+  default: '',
+  description: 'Decentralized Identifier for the asset'
 },
-      // Parameter definitions
 {
   displayName: 'Metadata',
   name: 'metadata',
@@ -306,40 +327,26 @@ export class OceanProtocol implements INodeType {
   required: true,
   displayOptions: {
     show: {
-      resource: ['dataNFTs'],
-      operation: ['createDataNFT'],
-    },
+      resource: ['asset'],
+      operation: ['createAsset']
+    }
   },
   default: '{}',
-  description: 'The metadata for the Data NFT',
+  description: 'Asset metadata including name, description, and other properties'
 },
 {
   displayName: 'Services',
   name: 'services',
   type: 'json',
-  required: false,
-  displayOptions: {
-    show: {
-      resource: ['dataNFTs'],
-      operation: ['createDataNFT'],
-    },
-  },
-  default: '[]',
-  description: 'The services configuration for the Data NFT',
-},
-{
-  displayName: 'Credentials',
-  name: 'credentials',
-  type: 'json',
   required: true,
   displayOptions: {
     show: {
-      resource: ['dataNFTs'],
-      operation: ['createDataNFT'],
-    },
+      resource: ['asset'],
+      operation: ['createAsset']
+    }
   },
-  default: '{}',
-  description: 'The credentials required for creating the Data NFT',
+  default: '[]',
+  description: 'Array of services associated with the asset'
 },
 {
   displayName: 'DID',
@@ -348,68 +355,64 @@ export class OceanProtocol implements INodeType {
   required: true,
   displayOptions: {
     show: {
-      resource: ['dataNFTs'],
-      operation: ['getDataNFT'],
-    },
+      resource: ['asset'],
+      operation: ['getAsset']
+    }
   },
   default: '',
-  description: 'The Decentralized Identifier (DID) of the Data NFT',
+  description: 'Decentralized Identifier for the asset to retrieve'
 },
 {
-  displayName: 'Query',
-  name: 'query',
-  type: 'json',
-  required: false,
+  displayName: 'Page',
+  name: 'page',
+  type: 'number',
   displayOptions: {
     show: {
-      resource: ['dataNFTs'],
-      operation: ['searchDataNFTs'],
-    },
+      resource: ['asset'],
+      operation: ['getAllAssets']
+    }
   },
-  default: '{}',
-  description: 'The search query parameters',
+  default: 1,
+  description: 'Page number for pagination'
 },
 {
   displayName: 'Offset',
   name: 'offset',
   type: 'number',
-  required: false,
   displayOptions: {
     show: {
-      resource: ['dataNFTs'],
-      operation: ['searchDataNFTs'],
-    },
+      resource: ['asset'],
+      operation: ['getAllAssets']
+    }
   },
   default: 0,
-  description: 'The number of items to skip in the result set',
-},
-{
-  displayName: 'Size',
-  name: 'size',
-  type: 'number',
-  required: false,
-  displayOptions: {
-    show: {
-      resource: ['dataNFTs'],
-      operation: ['searchDataNFTs'],
-    },
-  },
-  default: 25,
-  description: 'The maximum number of items to return',
+  description: 'Number of records to skip'
 },
 {
   displayName: 'Sort',
   name: 'sort',
-  type: 'json',
-  required: false,
+  type: 'string',
   displayOptions: {
     show: {
-      resource: ['dataNFTs'],
-      operation: ['searchDataNFTs'],
-    },
+      resource: ['asset'],
+      operation: ['getAllAssets']
+    }
   },
-  default: '{}',
-  description: 'The sort criteria for the search results',
+  default: 'created',
+  description: 'Field to sort by'
+},
+{
+  displayName: 'Ascending',
+  name: 'asc',
+  type: 'boolean',
+  displayOptions: {
+    show: {
+      resource: ['asset'],
+      operation: ['getAllAssets']
+    }
+  },
+  default: true,
+  description: 'Sort in ascending order'
 },
 {
   displayName: 'DID',
@@ -418,12 +421,12 @@ export class OceanProtocol implements INodeType {
   required: true,
   displayOptions: {
     show: {
-      resource: ['dataNFTs'],
-      operation: ['updateDataNFT'],
-    },
+      resource: ['asset'],
+      operation: ['updateAsset']
+    }
   },
   default: '',
-  description: 'The Decentralized Identifier (DID) of the Data NFT to update',
+  description: 'Decentralized Identifier for the asset to update'
 },
 {
   displayName: 'Metadata',
@@ -432,26 +435,12 @@ export class OceanProtocol implements INodeType {
   required: true,
   displayOptions: {
     show: {
-      resource: ['dataNFTs'],
-      operation: ['updateDataNFT'],
-    },
+      resource: ['asset'],
+      operation: ['updateAsset']
+    }
   },
   default: '{}',
-  description: 'The updated metadata for the Data NFT',
-},
-{
-  displayName: 'Credentials',
-  name: 'credentials',
-  type: 'json',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['dataNFTs'],
-      operation: ['updateDataNFT'],
-    },
-  },
-  default: '{}',
-  description: 'The credentials required for updating the Data NFT',
+  description: 'Updated asset metadata'
 },
 {
   displayName: 'DID',
@@ -460,68 +449,12 @@ export class OceanProtocol implements INodeType {
   required: true,
   displayOptions: {
     show: {
-      resource: ['dataNFTs'],
-      operation: ['deleteDataNFT'],
-    },
+      resource: ['asset'],
+      operation: ['deleteAsset']
+    }
   },
   default: '',
-  description: 'The Decentralized Identifier (DID) of the Data NFT to delete',
-},
-{
-  displayName: 'Credentials',
-  name: 'credentials',
-  type: 'json',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['dataNFTs'],
-      operation: ['deleteDataNFT'],
-    },
-  },
-  default: '{}',
-  description: 'The credentials required for deleting the Data NFT',
-},
-{
-  displayName: 'Data Token Options',
-  name: 'dataTokenOptions',
-  type: 'json',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['datatokens'],
-      operation: ['createDatatoken'],
-    },
-  },
-  default: '{}',
-  description: 'Configuration options for the datatoken creation',
-},
-{
-  displayName: 'Fixed Price Options',
-  name: 'fixedPriceOptions',
-  type: 'json',
-  required: false,
-  displayOptions: {
-    show: {
-      resource: ['datatokens'],
-      operation: ['createDatatoken'],
-    },
-  },
-  default: '{}',
-  description: 'Fixed price configuration for the datatoken',
-},
-{
-  displayName: 'DID',
-  name: 'did',
-  type: 'string',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['datatokens'],
-      operation: ['getDatatoken', 'purchaseDatatoken', 'getComputeEnvironments'],
-    },
-  },
-  default: '',
-  description: 'The Decentralized Identifier (DID) of the data asset',
+  description: 'Decentralized Identifier for the asset to delete'
 },
 {
   displayName: 'Query',
@@ -530,334 +463,818 @@ export class OceanProtocol implements INodeType {
   required: true,
   displayOptions: {
     show: {
-      resource: ['datatokens'],
-      operation: ['searchDatatokens'],
-    },
+      resource: ['asset'],
+      operation: ['queryAssets']
+    }
   },
   default: '{}',
-  description: 'Search query parameters for finding datatokens',
-},
-{
-  displayName: 'Data Token Address',
-  name: 'dataTokenAddress',
-  type: 'string',
-  required: false,
-  displayOptions: {
-    show: {
-      resource: ['datatokens'],
-      operation: ['searchDatatokens'],
-    },
-  },
-  default: '',
-  description: 'Specific datatoken contract address to filter by',
-},
-{
-  displayName: 'Consumer Address',
-  name: 'consumerAddress',
-  type: 'string',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['datatokens'],
-      operation: ['purchaseDatatoken'],
-    },
-  },
-  default: '',
-  description: 'Ethereum address of the datatoken consumer',
-},
-{
-  displayName: 'Service Index',
-  name: 'serviceIndex',
-  type: 'number',
-  required: false,
-  displayOptions: {
-    show: {
-      resource: ['datatokens'],
-      operation: ['purchaseDatatoken'],
-    },
-  },
-  default: 0,
-  description: 'Index of the service to purchase access to',
-},
-{
-  displayName: 'Dataset DID',
-  name: 'dataset',
-  type: 'string',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['computeToData'],
-      operation: ['startComputeJob'],
-    },
-  },
-  default: '',
-  description: 'The DID of the dataset to compute on',
-},
-{
-  displayName: 'Algorithm DID',
-  name: 'algorithm',
-  type: 'string',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['computeToData'],
-      operation: ['startComputeJob'],
-    },
-  },
-  default: '',
-  description: 'The DID of the algorithm to run',
-},
-{
-  displayName: 'Compute Environment',
-  name: 'compute',
-  type: 'json',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['computeToData'],
-      operation: ['startComputeJob'],
-    },
-  },
-  default: '{}',
-  description: 'Compute environment configuration as JSON',
-},
-{
-  displayName: 'Consumer Address',
-  name: 'consumerAddress',
-  type: 'string',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['computeToData'],
-      operation: ['startComputeJob', 'getComputeJobs', 'getComputeJob', 'stopComputeJob', 'deleteComputeJob', 'getComputeResults'],
-    },
-  },
-  default: '',
-  description: 'The Ethereum address of the consumer',
-},
-{
-  displayName: 'Job ID',
-  name: 'jobId',
-  type: 'string',
-  required: false,
-  displayOptions: {
-    show: {
-      resource: ['computeToData'],
-      operation: ['getComputeJobs'],
-    },
-  },
-  default: '',
-  description: 'Optional job ID to filter results',
-},
-{
-  displayName: 'Job ID',
-  name: 'jobId',
-  type: 'string',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['computeToData'],
-      operation: ['getComputeJob', 'stopComputeJob', 'deleteComputeJob', 'getComputeResults'],
-    },
-  },
-  default: '',
-  description: 'The ID of the compute job',
-},
-{
-  displayName: 'Output Index',
-  name: 'index',
-  type: 'number',
-  required: false,
-  displayOptions: {
-    show: {
-      resource: ['computeToData'],
-      operation: ['getComputeResults'],
-    },
-  },
-  default: 0,
-  description: 'Index of the output file to download',
-},
-{
-  displayName: 'Query',
-  name: 'query',
-  type: 'string',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['veOcean'],
-      operation: ['getVeOceanStats'],
-    },
-  },
-  default: '',
-  description: 'Query parameters for veOCEAN statistics',
-},
-{
-  displayName: 'VE Allocate',
-  name: 'veAllocate',
-  type: 'boolean',
-  required: false,
-  displayOptions: {
-    show: {
-      resource: ['veOcean'],
-      operation: ['getVeOceanStats'],
-    },
-  },
-  default: false,
-  description: 'Whether to include allocation data in the response',
-},
-{
-  displayName: 'Allocation',
-  name: 'allocation',
-  type: 'json',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['veOcean'],
-      operation: ['allocateVeOcean'],
-    },
-  },
-  default: '{}',
-  description: 'Allocation parameters for veOCEAN tokens',
-},
-{
-  displayName: 'User Data',
-  name: 'userData',
-  type: 'json',
-  required: false,
-  displayOptions: {
-    show: {
-      resource: ['veOcean'],
-      operation: ['allocateVeOcean'],
-    },
-  },
-  default: '{}',
-  description: 'Additional user data for the allocation',
-},
-{
-  displayName: 'DID',
-  name: 'did',
-  type: 'string',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['veOcean'],
-      operation: ['getVeOceanAllocations', 'claimRewards'],
-    },
-  },
-  default: '',
-  description: 'Decentralized Identifier of the data asset',
-},
-{
-  displayName: 'Chain IDs',
-  name: 'chainIds',
-  type: 'string',
-  required: false,
-  displayOptions: {
-    show: {
-      resource: ['veOcean'],
-      operation: ['getRewards'],
-    },
-  },
-  default: '',
-  description: 'Comma-separated list of chain IDs to query rewards for',
-},
-{
-  displayName: 'Consumer Address',
-  name: 'consumerAddress',
-  type: 'string',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['veOcean'],
-      operation: ['claimRewards'],
-    },
-  },
-  default: '',
-  description: 'Ethereum address of the consumer claiming rewards',
-},
-{
-  displayName: 'DID',
-  name: 'did',
-  type: 'string',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['assetMetadata'],
-      operation: ['getMetadata'],
-    },
-  },
-  default: '',
-  description: 'The Decentralized Identifier (DID) of the asset',
-},
-{
-  displayName: 'Query',
-  name: 'query',
-  type: 'json',
-  required: true,
-  displayOptions: {
-    show: {
-      resource: ['assetMetadata'],
-      operation: ['searchMetadata'],
-    },
-  },
-  default: '{}',
-  description: 'Search query object',
-},
-{
-  displayName: 'Filters',
-  name: 'filters',
-  type: 'json',
-  required: false,
-  displayOptions: {
-    show: {
-      resource: ['assetMetadata'],
-      operation: ['searchMetadata'],
-    },
-  },
-  default: '{}',
-  description: 'Search filters to apply',
+  description: 'Elasticsearch query object'
 },
 {
   displayName: 'Sort',
   name: 'sort',
-  type: 'json',
-  required: false,
+  type: 'string',
   displayOptions: {
     show: {
-      resource: ['assetMetadata'],
-      operation: ['searchMetadata'],
-    },
+      resource: ['asset'],
+      operation: ['queryAssets']
+    }
   },
-  default: '{}',
-  description: 'Sort options for search results',
+  default: 'created',
+  description: 'Field to sort by'
 },
 {
-  displayName: 'Asset Name',
-  name: 'name',
+  displayName: 'Offset',
+  name: 'offset',
+  type: 'number',
+  displayOptions: {
+    show: {
+      resource: ['asset'],
+      operation: ['queryAssets']
+    }
+  },
+  default: 0,
+  description: 'Number of records to skip'
+},
+{
+  displayName: 'Page',
+  name: 'page',
+  type: 'number',
+  displayOptions: {
+    show: {
+      resource: ['asset'],
+      operation: ['queryAssets']
+    }
+  },
+  default: 1,
+  description: 'Page number for pagination'
+},
+{
+	displayName: 'Name',
+	name: 'name',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['datatoken'],
+			operation: ['createDatatoken'],
+		},
+	},
+	default: '',
+	description: 'Name of the datatoken',
+},
+{
+	displayName: 'Symbol',
+	name: 'symbol',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['datatoken'],
+			operation: ['createDatatoken'],
+		},
+	},
+	default: '',
+	description: 'Symbol of the datatoken',
+},
+{
+	displayName: 'Template Index',
+	name: 'templateIndex',
+	type: 'number',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['datatoken'],
+			operation: ['createDatatoken'],
+		},
+	},
+	default: 1,
+	description: 'Template index for the datatoken',
+},
+{
+	displayName: 'Minter',
+	name: 'minter',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['datatoken'],
+			operation: ['createDatatoken', 'updateDatatoken'],
+		},
+	},
+	default: '',
+	description: 'Address of the minter',
+},
+{
+	displayName: 'Cap',
+	name: 'cap',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['datatoken'],
+			operation: ['createDatatoken', 'updateDatatoken'],
+		},
+	},
+	default: '',
+	description: 'Maximum cap for the datatoken',
+},
+{
+	displayName: 'Address',
+	name: 'address',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['datatoken'],
+			operation: ['getDatatoken', 'updateDatatoken', 'mintDatatoken'],
+		},
+	},
+	default: '',
+	description: 'Contract address of the datatoken',
+},
+{
+	displayName: 'Chain ID',
+	name: 'chainId',
+	type: 'string',
+	displayOptions: {
+		show: {
+			resource: ['datatoken'],
+			operation: ['getAllDatatokens'],
+		},
+	},
+	default: '',
+	description: 'Blockchain network chain ID',
+},
+{
+	displayName: 'Owner',
+	name: 'owner',
+	type: 'string',
+	displayOptions: {
+		show: {
+			resource: ['datatoken'],
+			operation: ['getAllDatatokens'],
+		},
+	},
+	default: '',
+	description: 'Owner address to filter by',
+},
+{
+	displayName: 'Page',
+	name: 'page',
+	type: 'number',
+	displayOptions: {
+		show: {
+			resource: ['datatoken'],
+			operation: ['getAllDatatokens'],
+		},
+	},
+	default: 1,
+	description: 'Page number for pagination',
+},
+{
+	displayName: 'Offset',
+	name: 'offset',
+	type: 'number',
+	displayOptions: {
+		show: {
+			resource: ['datatoken'],
+			operation: ['getAllDatatokens'],
+		},
+	},
+	default: 100,
+	description: 'Number of items per page',
+},
+{
+	displayName: 'Amount',
+	name: 'amount',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['datatoken'],
+			operation: ['mintDatatoken'],
+		},
+	},
+	default: '',
+	description: 'Amount of datatokens to mint',
+},
+{
+	displayName: 'To',
+	name: 'to',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['datatoken'],
+			operation: ['mintDatatoken'],
+		},
+	},
+	default: '',
+	description: 'Address to mint the datatokens to',
+},
+{
+	displayName: 'Signature',
+	name: 'signature',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['computeJob'],
+			operation: ['createComputeJob', 'getComputeJob', 'getAllComputeJobs', 'updateComputeJob', 'deleteComputeJob'],
+		},
+	},
+	default: '',
+	description: 'Cryptographic signature for authentication',
+},
+{
+	displayName: 'Document ID',
+	name: 'documentId',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['computeJob'],
+			operation: ['createComputeJob', 'getComputeJob', 'updateComputeJob', 'deleteComputeJob'],
+		},
+	},
+	default: '',
+	description: 'The ID of the document/dataset for compute job',
+},
+{
+	displayName: 'Service ID',
+	name: 'serviceId',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['computeJob'],
+			operation: ['createComputeJob', 'getComputeJob', 'updateComputeJob', 'deleteComputeJob'],
+		},
+	},
+	default: '',
+	description: 'The ID of the compute service',
+},
+{
+	displayName: 'Consumer Address',
+	name: 'consumerAddress',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['computeJob'],
+			operation: ['createComputeJob', 'getComputeJob', 'getAllComputeJobs', 'updateComputeJob', 'deleteComputeJob'],
+		},
+	},
+	default: '',
+	description: 'The wallet address of the consumer',
+},
+{
+	displayName: 'Job ID',
+	name: 'jobId',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['computeJob'],
+			operation: ['createComputeJob', 'getComputeJob', 'updateComputeJob', 'deleteComputeJob'],
+		},
+	},
+	default: '',
+	description: 'The unique identifier for the compute job',
+},
+{
+	displayName: 'Output',
+	name: 'output',
+	type: 'json',
+	required: false,
+	displayOptions: {
+		show: {
+			resource: ['computeJob'],
+			operation: ['createComputeJob'],
+		},
+	},
+	default: '{}',
+	description: 'Output configuration for the compute job',
+},
+{
+	displayName: 'Action',
+	name: 'action',
+	type: 'options',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['computeJob'],
+			operation: ['updateComputeJob'],
+		},
+	},
+	options: [
+		{
+			name: 'Stop',
+			value: 'stop',
+			description: 'Stop the compute job',
+		},
+		{
+			name: 'Restart',
+			value: 'restart',
+			description: 'Restart the compute job',
+		},
+	],
+	default: 'stop',
+	description: 'The action to perform on the compute job',
+},
+{
+  displayName: 'User Address',
+  name: 'user',
   type: 'string',
   required: true,
   displayOptions: {
     show: {
-      resource: ['assetMetadata'],
-      operation: ['validateAssetName'],
-    },
+      resource: ['veOcean'],
+      operation: ['getVeOceanLocks']
+    }
   },
   default: '',
-  description: 'The asset name to validate availability',
+  description: 'The user wallet address to get veOCEAN locks for'
 },
 {
-  displayName: 'Chain IDs',
-  name: 'chainIds',
+  displayName: 'Chain ID',
+  name: 'chainId',
+  type: 'options',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['veOcean'],
+      operation: ['getVeOceanLocks']
+    }
+  },
+  options: [
+    { name: 'Ethereum', value: '1' },
+    { name: 'Polygon', value: '137' },
+    { name: 'BSC', value: '56' }
+  ],
+  default: '1',
+  description: 'The blockchain network chain ID'
+},
+{
+  displayName: 'Amount',
+  name: 'amount',
   type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['veOcean'],
+      operation: ['createVeOceanLock']
+    }
+  },
+  default: '',
+  description: 'Amount of OCEAN tokens to lock (in wei or token units)'
+},
+{
+  displayName: 'Unlock Time',
+  name: 'unlockTime',
+  type: 'dateTime',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['veOcean'],
+      operation: ['createVeOceanLock']
+    }
+  },
+  default: '',
+  description: 'Timestamp when the locked tokens can be unlocked'
+},
+{
+  displayName: 'User Address',
+  name: 'user',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['veOcean'],
+      operation: ['createVeOceanLock']
+    }
+  },
+  default: '',
+  description: 'The user wallet address creating the lock'
+},
+{
+  displayName: 'User Address',
+  name: 'user',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['veOcean'],
+      operation: ['getVeOceanRewards']
+    }
+  },
+  default: '',
+  description: 'The user wallet address to get rewards for'
+},
+{
+  displayName: 'Chain ID',
+  name: 'chainId',
+  type: 'options',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['veOcean'],
+      operation: ['getVeOceanRewards']
+    }
+  },
+  options: [
+    { name: 'Ethereum', value: '1' },
+    { name: 'Polygon', value: '137' },
+    { name: 'BSC', value: '56' }
+  ],
+  default: '1',
+  description: 'The blockchain network chain ID'
+},
+{
+  displayName: 'User Address',
+  name: 'user',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['veOcean'],
+      operation: ['claimVeOceanRewards']
+    }
+  },
+  default: '',
+  description: 'The user wallet address claiming rewards'
+},
+{
+  displayName: 'Amounts',
+  name: 'amounts',
+  type: 'string',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['veOcean'],
+      operation: ['claimVeOceanRewards']
+    }
+  },
+  default: '',
+  description: 'Comma-separated list of amounts to claim'
+},
+{
+  displayName: 'Chain ID',
+  name: 'chainId',
+  type: 'options',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['veOcean'],
+      operation: ['claimVeOceanRewards']
+    }
+  },
+  options: [
+    { name: 'Ethereum', value: '1' },
+    { name: 'Polygon', value: '137' },
+    { name: 'BSC', value: '56' }
+  ],
+  default: '1',
+  description: 'The blockchain network chain ID'
+},
+{
+  displayName: 'Chain ID',
+  name: 'chainId',
+  type: 'options',
+  required: true,
+  displayOptions: {
+    show: {
+      resource: ['veOcean'],
+      operation: ['getAllVeOceanAllocations']
+    }
+  },
+  options: [
+    { name: 'Ethereum', value: '1' },
+    { name: 'Polygon', value: '137' },
+    { name: 'BSC', value: '56' }
+  ],
+  default: '1',
+  description: 'The blockchain network chain ID'
+},
+{
+  displayName: 'Epoch',
+  name: 'epoch',
+  type: 'number',
   required: false,
   displayOptions: {
     show: {
-      resource: ['assetMetadata'],
-      operation: ['getProtocolStats'],
-    },
+      resource: ['veOcean'],
+      operation: ['getAllVeOceanAllocations']
+    }
   },
-  default: '',
-  description: 'Comma-separated list of chain IDs to filter statistics',
+  default: 0,
+  description: 'Specific epoch to get allocations for (leave empty for current epoch)'
+},
+{
+	displayName: 'Document ID',
+	name: 'documentId',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['order'],
+			operation: ['createOrder'],
+		},
+	},
+	default: '',
+	description: 'The document ID of the asset to order',
+},
+{
+	displayName: 'Service ID',
+	name: 'serviceId',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['order'],
+			operation: ['createOrder'],
+		},
+	},
+	default: '',
+	description: 'The service ID for the asset',
+},
+{
+	displayName: 'Consumer Address',
+	name: 'consumerAddress',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['order'],
+			operation: ['createOrder'],
+		},
+	},
+	default: '',
+	description: 'The wallet address of the consumer placing the order',
+},
+{
+	displayName: 'Signature',
+	name: 'signature',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['order'],
+			operation: ['createOrder'],
+		},
+	},
+	default: '',
+	description: 'Web3 signature for the order transaction',
+},
+{
+	displayName: 'Transaction ID',
+	name: 'txId',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['order'],
+			operation: ['getOrder'],
+		},
+	},
+	default: '',
+	description: 'The transaction ID of the order to retrieve',
+},
+{
+	displayName: 'Consumer Address',
+	name: 'consumerAddress',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['order'],
+			operation: ['getAllOrders'],
+		},
+	},
+	default: '',
+	description: 'The wallet address of the consumer to get orders for',
+},
+{
+	displayName: 'Page',
+	name: 'page',
+	type: 'number',
+	displayOptions: {
+		show: {
+			resource: ['order'],
+			operation: ['getAllOrders'],
+		},
+	},
+	default: 1,
+	description: 'Page number for pagination',
+},
+{
+	displayName: 'Offset',
+	name: 'offset',
+	type: 'number',
+	displayOptions: {
+		show: {
+			resource: ['order'],
+			operation: ['getAllOrders'],
+		},
+	},
+	default: 0,
+	description: 'Number of records to skip',
+},
+{
+	displayName: 'Document ID',
+	name: 'documentId',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['order'],
+			operation: ['downloadAsset'],
+		},
+	},
+	default: '',
+	description: 'The document ID of the asset to download',
+},
+{
+	displayName: 'Service ID',
+	name: 'serviceId',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['order'],
+			operation: ['downloadAsset'],
+		},
+	},
+	default: '',
+	description: 'The service ID for the asset',
+},
+{
+	displayName: 'File Index',
+	name: 'fileIndex',
+	type: 'number',
+	displayOptions: {
+		show: {
+			resource: ['order'],
+			operation: ['downloadAsset'],
+		},
+	},
+	default: 0,
+	description: 'Index of the file to download from the asset',
+},
+{
+	displayName: 'Signature',
+	name: 'signature',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['order'],
+			operation: ['downloadAsset'],
+		},
+	},
+	default: '',
+	description: 'Web3 signature for the download request',
+},
+{
+	displayName: 'Document ID',
+	name: 'documentId',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['order'],
+			operation: ['initializeAsset'],
+		},
+	},
+	default: '',
+	description: 'The document ID of the asset to initialize',
+},
+{
+	displayName: 'Service ID',
+	name: 'serviceId',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['order'],
+			operation: ['initializeAsset'],
+		},
+	},
+	default: '',
+	description: 'The service ID for the asset',
+},
+{
+	displayName: 'Signature',
+	name: 'signature',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['order'],
+			operation: ['initializeAsset'],
+		},
+	},
+	default: '',
+	description: 'Web3 signature for the initialization request',
+},
+{
+	displayName: 'Consumer Address',
+	name: 'consumerAddress',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['order'],
+			operation: ['initializeAsset'],
+		},
+	},
+	default: '',
+	description: 'The wallet address of the consumer initializing the asset',
+},
+{
+	displayName: 'Document ID',
+	name: 'documentId',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['provider'],
+			operation: ['encryptData'],
+		},
+	},
+	default: '',
+	description: 'The document identifier to encrypt',
+},
+{
+	displayName: 'Signature',
+	name: 'signature',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['provider'],
+			operation: ['encryptData', 'getFileInfo', 'validateAsset'],
+		},
+	},
+	default: '',
+	description: 'Digital signature for authentication',
+},
+{
+	displayName: 'Document',
+	name: 'document',
+	type: 'json',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['provider'],
+			operation: ['encryptData'],
+		},
+	},
+	default: '{}',
+	description: 'The document data to encrypt',
+},
+{
+	displayName: 'DID',
+	name: 'did',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['provider'],
+			operation: ['getFileInfo', 'validateAsset'],
+		},
+	},
+	default: '',
+	description: 'Decentralized identifier of the asset',
+},
+{
+	displayName: 'Service ID',
+	name: 'serviceId',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['provider'],
+			operation: ['getFileInfo'],
+		},
+	},
+	default: '',
+	description: 'The service identifier for the asset',
+},
+{
+	displayName: 'User Address',
+	name: 'userAddress',
+	type: 'string',
+	required: true,
+	displayOptions: {
+		show: {
+			resource: ['provider'],
+			operation: ['getNonce'],
+		},
+	},
+	default: '',
+	description: 'The wallet address of the user',
 },
     ],
   };
@@ -867,16 +1284,18 @@ export class OceanProtocol implements INodeType {
     const resource = this.getNodeParameter('resource', 0) as string;
 
     switch (resource) {
-      case 'dataNFTs':
-        return [await executeDataNFTsOperations.call(this, items)];
-      case 'datatokens':
-        return [await executeDatatokensOperations.call(this, items)];
-      case 'computeToData':
-        return [await executeComputeToDataOperations.call(this, items)];
+      case 'asset':
+        return [await executeAssetOperations.call(this, items)];
+      case 'datatoken':
+        return [await executeDatatokenOperations.call(this, items)];
+      case 'computeJob':
+        return [await executeComputeJobOperations.call(this, items)];
       case 'veOcean':
         return [await executeVeOceanOperations.call(this, items)];
-      case 'assetMetadata':
-        return [await executeAssetMetadataOperations.call(this, items)];
+      case 'order':
+        return [await executeOrderOperations.call(this, items)];
+      case 'provider':
+        return [await executeProviderOperations.call(this, items)];
       default:
         throw new NodeOperationError(this.getNode(), `The resource "${resource}" is not supported`);
     }
@@ -887,7 +1306,7 @@ export class OceanProtocol implements INodeType {
 // Resource Handler Functions
 // ============================================================
 
-async function executeDataNFTsOperations(
+async function executeAssetOperations(
   this: IExecuteFunctions,
   items: INodeExecutionData[],
 ): Promise<INodeExecutionData[]> {
@@ -900,109 +1319,134 @@ async function executeDataNFTsOperations(
       let result: any;
 
       switch (operation) {
-        case 'createDataNFT': {
+        case 'createAsset': {
+          const did = this.getNodeParameter('did', i) as string;
           const metadata = this.getNodeParameter('metadata', i) as any;
           const services = this.getNodeParameter('services', i) as any;
-          const ddoCredentials = this.getNodeParameter('credentials', i) as any;
+
+          const body = {
+            did,
+            metadata: typeof metadata === 'string' ? JSON.parse(metadata) : metadata,
+            services: typeof services === 'string' ? JSON.parse(services) : services
+          };
 
           const options: any = {
             method: 'POST',
             url: `${credentials.baseUrl}/api/aquarius/assets/ddo`,
             headers: {
-              'Content-Type': 'application/json',
               'Authorization': `Bearer ${credentials.apiKey}`,
+              'Content-Type': 'application/json'
             },
-            body: {
-              metadata: metadata,
-              services: services,
-              credentials: ddoCredentials,
-            },
-            json: true,
+            body,
+            json: true
           };
 
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
 
-        case 'getDataNFT': {
+        case 'getAsset': {
           const did = this.getNodeParameter('did', i) as string;
 
           const options: any = {
             method: 'GET',
             url: `${credentials.baseUrl}/api/aquarius/assets/ddo/${did}`,
             headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
+              'Authorization': `Bearer ${credentials.apiKey}`
             },
-            json: true,
+            json: true
           };
 
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
 
-        case 'searchDataNFTs': {
-          const query = this.getNodeParameter('query', i) as any;
+        case 'getAllAssets': {
+          const page = this.getNodeParameter('page', i) as number;
           const offset = this.getNodeParameter('offset', i) as number;
-          const size = this.getNodeParameter('size', i) as number;
-          const sort = this.getNodeParameter('sort', i) as any;
+          const sort = this.getNodeParameter('sort', i) as string;
+          const asc = this.getNodeParameter('asc', i) as boolean;
+
+          const queryParams = new URLSearchParams();
+          if (page) queryParams.append('page', page.toString());
+          if (offset) queryParams.append('offset', offset.toString());
+          if (sort) queryParams.append('sort', sort);
+          queryParams.append('asc', asc.toString());
 
           const options: any = {
             method: 'GET',
-            url: `${credentials.baseUrl}/api/aquarius/assets/query`,
+            url: `${credentials.baseUrl}/api/aquarius/assets?${queryParams.toString()}`,
             headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
+              'Authorization': `Bearer ${credentials.apiKey}`
             },
-            qs: {
-              query: JSON.stringify(query),
-              offset: offset,
-              size: size,
-              sort: JSON.stringify(sort),
-            },
-            json: true,
+            json: true
           };
 
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
 
-        case 'updateDataNFT': {
+        case 'updateAsset': {
           const did = this.getNodeParameter('did', i) as string;
           const metadata = this.getNodeParameter('metadata', i) as any;
-          const ddoCredentials = this.getNodeParameter('credentials', i) as any;
+
+          const body = {
+            metadata: typeof metadata === 'string' ? JSON.parse(metadata) : metadata
+          };
 
           const options: any = {
             method: 'PUT',
             url: `${credentials.baseUrl}/api/aquarius/assets/ddo/${did}`,
             headers: {
-              'Content-Type': 'application/json',
               'Authorization': `Bearer ${credentials.apiKey}`,
+              'Content-Type': 'application/json'
             },
-            body: {
-              metadata: metadata,
-              credentials: ddoCredentials,
-            },
-            json: true,
+            body,
+            json: true
           };
 
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
 
-        case 'deleteDataNFT': {
+        case 'deleteAsset': {
           const did = this.getNodeParameter('did', i) as string;
-          const ddoCredentials = this.getNodeParameter('credentials', i) as any;
 
           const options: any = {
             method: 'DELETE',
             url: `${credentials.baseUrl}/api/aquarius/assets/ddo/${did}`,
             headers: {
-              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${credentials.apiKey}`
+            },
+            json: true
+          };
+
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
+
+        case 'queryAssets': {
+          const query = this.getNodeParameter('query', i) as any;
+          const sort = this.getNodeParameter('sort', i) as string;
+          const offset = this.getNodeParameter('offset', i) as number;
+          const page = this.getNodeParameter('page', i) as number;
+
+          const body = {
+            query: typeof query === 'string' ? JSON.parse(query) : query,
+            sort,
+            offset,
+            page
+          };
+
+          const options: any = {
+            method: 'POST',
+            url: `${credentials.baseUrl}/api/aquarius/assets/query`,
+            headers: {
               'Authorization': `Bearer ${credentials.apiKey}`,
+              'Content-Type': 'application/json'
             },
-            body: {
-              credentials: ddoCredentials,
-            },
-            json: true,
+            body,
+            json: true
           };
 
           result = await this.helpers.httpRequest(options) as any;
@@ -1010,18 +1454,13 @@ async function executeDataNFTsOperations(
         }
 
         default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`, {
-            itemIndex: i,
-          });
+          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
       }
 
       returnData.push({ json: result, pairedItem: { item: i } });
     } catch (error: any) {
       if (this.continueOnFail()) {
-        returnData.push({ 
-          json: { error: error.message }, 
-          pairedItem: { item: i } 
-        });
+        returnData.push({ json: { error: error.message }, pairedItem: { item: i } });
       } else {
         throw new NodeApiError(this.getNode(), error, { itemIndex: i });
       }
@@ -1031,306 +1470,339 @@ async function executeDataNFTsOperations(
   return returnData;
 }
 
-async function executeDatatokensOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
+async function executeDatatokenOperations(
+	this: IExecuteFunctions,
+	items: INodeExecutionData[],
 ): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  const credentials = await this.getCredentials('oceanprotocolApi') as any;
+	const returnData: INodeExecutionData[] = [];
+	const operation = this.getNodeParameter('operation', 0) as string;
+	const credentials = await this.getCredentials('oceanprotocolApi') as any;
 
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
+	for (let i = 0; i < items.length; i++) {
+		try {
+			let result: any;
 
-      switch (operation) {
-        case 'createDatatoken': {
-          const dataTokenOptions = this.getNodeParameter('dataTokenOptions', i) as any;
-          const fixedPriceOptions = this.getNodeParameter('fixedPriceOptions', i, {}) as any;
+			switch (operation) {
+				case 'createDatatoken': {
+					const name = this.getNodeParameter('name', i) as string;
+					const symbol = this.getNodeParameter('symbol', i) as string;
+					const templateIndex = this.getNodeParameter('templateIndex', i) as number;
+					const minter = this.getNodeParameter('minter', i) as string;
+					const cap = this.getNodeParameter('cap', i) as string;
 
-          const body: any = {
-            dataTokenOptions: typeof dataTokenOptions === 'string' ? JSON.parse(dataTokenOptions) : dataTokenOptions,
-            fixedPriceOptions: typeof fixedPriceOptions === 'string' ? JSON.parse(fixedPriceOptions) : fixedPriceOptions,
-          };
+					const options: any = {
+						method: 'POST',
+						url: `${credentials.baseUrl}/api/aquarius/datatokens`,
+						headers: {
+							'Authorization': `Bearer ${credentials.apiKey}`,
+							'Content-Type': 'application/json',
+						},
+						body: {
+							name,
+							symbol,
+							templateIndex,
+							minter,
+							cap,
+						},
+						json: true,
+					};
 
-          const options: any = {
-            method: 'POST',
-            url: `${credentials.baseUrl}/api/aquarius/assets/ddo`,
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${credentials.apiKey}`,
-            },
-            body: body,
-            json: true,
-          };
+					result = await this.helpers.httpRequest(options) as any;
+					break;
+				}
 
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
+				case 'getDatatoken': {
+					const address = this.getNodeParameter('address', i) as string;
 
-        case 'getDatatoken': {
-          const did = this.getNodeParameter('did', i) as string;
+					const options: any = {
+						method: 'GET',
+						url: `${credentials.baseUrl}/api/aquarius/datatokens/${address}`,
+						headers: {
+							'Authorization': `Bearer ${credentials.apiKey}`,
+						},
+						json: true,
+					};
 
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/aquarius/assets/ddo/${encodeURIComponent(did)}`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-            },
-            json: true,
-          };
+					result = await this.helpers.httpRequest(options) as any;
+					break;
+				}
 
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
+				case 'getAllDatatokens': {
+					const chainId = this.getNodeParameter('chainId', i, '') as string;
+					const owner = this.getNodeParameter('owner', i, '') as string;
+					const page = this.getNodeParameter('page', i, 1) as number;
+					const offset = this.getNodeParameter('offset', i, 100) as number;
 
-        case 'searchDatatokens': {
-          const query = this.getNodeParameter('query', i) as any;
-          const dataTokenAddress = this.getNodeParameter('dataTokenAddress', i, '') as string;
+					const queryParams = new URLSearchParams();
+					if (chainId) queryParams.append('chainId', chainId);
+					if (owner) queryParams.append('owner', owner);
+					queryParams.append('page', page.toString());
+					queryParams.append('offset', offset.toString());
 
-          const queryParams: any = {
-            query: typeof query === 'string' ? JSON.parse(query) : query,
-          };
+					const options: any = {
+						method: 'GET',
+						url: `${credentials.baseUrl}/api/aquarius/datatokens?${queryParams.toString()}`,
+						headers: {
+							'Authorization': `Bearer ${credentials.apiKey}`,
+						},
+						json: true,
+					};
 
-          if (dataTokenAddress) {
-            queryParams.dataTokenAddress = dataTokenAddress;
-          }
+					result = await this.helpers.httpRequest(options) as any;
+					break;
+				}
 
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/aquarius/assets/query`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-            },
-            qs: queryParams,
-            json: true,
-          };
+				case 'updateDatatoken': {
+					const address = this.getNodeParameter('address', i) as string;
+					const cap = this.getNodeParameter('cap', i) as string;
+					const minter = this.getNodeParameter('minter', i) as string;
 
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
+					const options: any = {
+						method: 'PUT',
+						url: `${credentials.baseUrl}/api/aquarius/datatokens/${address}`,
+						headers: {
+							'Authorization': `Bearer ${credentials.apiKey}`,
+							'Content-Type': 'application/json',
+						},
+						body: {
+							cap,
+							minter,
+						},
+						json: true,
+					};
 
-        case 'purchaseDatatoken': {
-          const did = this.getNodeParameter('did', i) as string;
-          const consumerAddress = this.getNodeParameter('consumerAddress', i) as string;
-          const serviceIndex = this.getNodeParameter('serviceIndex', i, 0) as number;
+					result = await this.helpers.httpRequest(options) as any;
+					break;
+				}
 
-          const body: any = {
-            consumerAddress,
-            serviceIndex,
-          };
+				case 'mintDatatoken': {
+					const address = this.getNodeParameter('address', i) as string;
+					const amount = this.getNodeParameter('amount', i) as string;
+					const to = this.getNodeParameter('to', i) as string;
 
-          const options: any = {
-            method: 'POST',
-            url: `${credentials.baseUrl}/api/aquarius/assets/ddo/${encodeURIComponent(did)}/order`,
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${credentials.apiKey}`,
-            },
-            body: body,
-            json: true,
-          };
+					const options: any = {
+						method: 'POST',
+						url: `${credentials.baseUrl}/api/aquarius/datatokens/${address}/mint`,
+						headers: {
+							'Authorization': `Bearer ${credentials.apiKey}`,
+							'Content-Type': 'application/json',
+						},
+						body: {
+							amount,
+							to,
+						},
+						json: true,
+					};
 
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
+					result = await this.helpers.httpRequest(options) as any;
+					break;
+				}
 
-        case 'getComputeEnvironments': {
-          const did = this.getNodeParameter('did', i) as string;
+				default:
+					throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`, {
+						itemIndex: i,
+					});
+			}
 
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/aquarius/assets/ddo/${encodeURIComponent(did)}/computeEnvironments`,
-            headers: {
-              'Authorization': `Bearer ${credentials.apiKey}`,
-            },
-            json: true,
-          };
+			returnData.push({
+				json: result,
+				pairedItem: { item: i },
+			});
 
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
+		} catch (error: any) {
+			if (this.continueOnFail()) {
+				returnData.push({
+					json: { error: error.message },
+					pairedItem: { item: i },
+				});
+			} else {
+				throw new NodeApiError(this.getNode(), error, { itemIndex: i });
+			}
+		}
+	}
 
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-
-      returnData.push({ json: result, pairedItem: { item: i } });
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({ 
-          json: { error: error.message }, 
-          pairedItem: { item: i } 
-        });
-      } else {
-        throw new NodeApiError(this.getNode(), error);
-      }
-    }
-  }
-
-  return returnData;
+	return returnData;
 }
 
-async function executeComputeToDataOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
+async function executeComputeJobOperations(
+	this: IExecuteFunctions,
+	items: INodeExecutionData[],
 ): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  const credentials = await this.getCredentials('oceanprotocolApi') as any;
+	const returnData: INodeExecutionData[] = [];
+	const operation = this.getNodeParameter('operation', 0) as string;
+	const credentials = await this.getCredentials('oceanprotocolApi') as any;
 
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-      
-      switch (operation) {
-        case 'startComputeJob': {
-          const dataset = this.getNodeParameter('dataset', i) as string;
-          const algorithm = this.getNodeParameter('algorithm', i) as string;
-          const compute = this.getNodeParameter('compute', i) as string;
-          const consumerAddress = this.getNodeParameter('consumerAddress', i) as string;
+	for (let i = 0; i < items.length; i++) {
+		try {
+			let result: any;
 
-          const requestBody: any = {
-            dataset,
-            algorithm,
-            compute: typeof compute === 'string' ? JSON.parse(compute) : compute,
-            consumerAddress,
-          };
+			switch (operation) {
+				case 'createComputeJob': {
+					const signature = this.getNodeParameter('signature', i) as string;
+					const documentId = this.getNodeParameter('documentId', i) as string;
+					const serviceId = this.getNodeParameter('serviceId', i) as string;
+					const consumerAddress = this.getNodeParameter('consumerAddress', i) as string;
+					const jobId = this.getNodeParameter('jobId', i) as string;
+					const output = this.getNodeParameter('output', i) as object;
 
-          const options: any = {
-            method: 'POST',
-            url: `${credentials.baseUrl}/api/services/compute`,
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: requestBody,
-            json: true,
-          };
+					const body: any = {
+						signature,
+						documentId,
+						serviceId,
+						consumerAddress,
+						jobId,
+						output,
+					};
 
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
+					const options: any = {
+						method: 'POST',
+						url: `${credentials.baseUrl}/api/services/compute`,
+						headers: {
+							'Authorization': `Bearer ${credentials.apiKey}`,
+							'Content-Type': 'application/json',
+						},
+						body,
+						json: true,
+					};
 
-        case 'getComputeJobs': {
-          const consumerAddress = this.getNodeParameter('consumerAddress', i) as string;
-          const jobId = this.getNodeParameter('jobId', i) as string;
+					result = await this.helpers.httpRequest(options) as any;
+					break;
+				}
 
-          const queryParams: any = {
-            consumerAddress,
-          };
+				case 'getComputeJob': {
+					const signature = this.getNodeParameter('signature', i) as string;
+					const documentId = this.getNodeParameter('documentId', i) as string;
+					const serviceId = this.getNodeParameter('serviceId', i) as string;
+					const consumerAddress = this.getNodeParameter('consumerAddress', i) as string;
+					const jobId = this.getNodeParameter('jobId', i) as string;
 
-          if (jobId) {
-            queryParams.jobId = jobId;
-          }
+					const params = new URLSearchParams({
+						signature,
+						documentId,
+						serviceId,
+						consumerAddress,
+						jobId,
+					});
 
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/services/compute`,
-            qs: queryParams,
-            json: true,
-          };
+					const options: any = {
+						method: 'GET',
+						url: `${credentials.baseUrl}/api/services/compute?${params.toString()}`,
+						headers: {
+							'Authorization': `Bearer ${credentials.apiKey}`,
+						},
+						json: true,
+					};
 
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
+					result = await this.helpers.httpRequest(options) as any;
+					break;
+				}
 
-        case 'getComputeJob': {
-          const jobId = this.getNodeParameter('jobId', i) as string;
-          const consumerAddress = this.getNodeParameter('consumerAddress', i) as string;
+				case 'getAllComputeJobs': {
+					const signature = this.getNodeParameter('signature', i) as string;
+					const consumerAddress = this.getNodeParameter('consumerAddress', i) as string;
 
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/services/compute/${jobId}`,
-            qs: {
-              consumerAddress,
-            },
-            json: true,
-          };
+					const params = new URLSearchParams({
+						signature,
+						consumerAddress,
+					});
 
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
+					const options: any = {
+						method: 'GET',
+						url: `${credentials.baseUrl}/api/services/compute?${params.toString()}`,
+						headers: {
+							'Authorization': `Bearer ${credentials.apiKey}`,
+						},
+						json: true,
+					};
 
-        case 'stopComputeJob': {
-          const jobId = this.getNodeParameter('jobId', i) as string;
-          const consumerAddress = this.getNodeParameter('consumerAddress', i) as string;
+					result = await this.helpers.httpRequest(options) as any;
+					break;
+				}
 
-          const options: any = {
-            method: 'PUT',
-            url: `${credentials.baseUrl}/api/services/compute/${jobId}`,
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: {
-              consumerAddress,
-            },
-            json: true,
-          };
+				case 'updateComputeJob': {
+					const signature = this.getNodeParameter('signature', i) as string;
+					const documentId = this.getNodeParameter('documentId', i) as string;
+					const serviceId = this.getNodeParameter('serviceId', i) as string;
+					const consumerAddress = this.getNodeParameter('consumerAddress', i) as string;
+					const jobId = this.getNodeParameter('jobId', i) as string;
+					const action = this.getNodeParameter('action', i) as string;
 
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
+					const body: any = {
+						signature,
+						documentId,
+						serviceId,
+						consumerAddress,
+						jobId,
+						action,
+					};
 
-        case 'deleteComputeJob': {
-          const jobId = this.getNodeParameter('jobId', i) as string;
-          const consumerAddress = this.getNodeParameter('consumerAddress', i) as string;
+					const options: any = {
+						method: 'PUT',
+						url: `${credentials.baseUrl}/api/services/compute`,
+						headers: {
+							'Authorization': `Bearer ${credentials.apiKey}`,
+							'Content-Type': 'application/json',
+						},
+						body,
+						json: true,
+					};
 
-          const options: any = {
-            method: 'DELETE',
-            url: `${credentials.baseUrl}/api/services/compute/${jobId}`,
-            qs: {
-              consumerAddress,
-            },
-            json: true,
-          };
+					result = await this.helpers.httpRequest(options) as any;
+					break;
+				}
 
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
+				case 'deleteComputeJob': {
+					const signature = this.getNodeParameter('signature', i) as string;
+					const documentId = this.getNodeParameter('documentId', i) as string;
+					const serviceId = this.getNodeParameter('serviceId', i) as string;
+					const consumerAddress = this.getNodeParameter('consumerAddress', i) as string;
+					const jobId = this.getNodeParameter('jobId', i) as string;
 
-        case 'getComputeResults': {
-          const jobId = this.getNodeParameter('jobId', i) as string;
-          const consumerAddress = this.getNodeParameter('consumerAddress', i) as string;
-          const index = this.getNodeParameter('index', i) as number;
+					const body: any = {
+						signature,
+						documentId,
+						serviceId,
+						consumerAddress,
+						jobId,
+					};
 
-          const queryParams: any = {
-            consumerAddress,
-          };
+					const options: any = {
+						method: 'DELETE',
+						url: `${credentials.baseUrl}/api/services/compute`,
+						headers: {
+							'Authorization': `Bearer ${credentials.apiKey}`,
+							'Content-Type': 'application/json',
+						},
+						body,
+						json: true,
+					};
 
-          if (index !== undefined) {
-            queryParams.index = index;
-          }
+					result = await this.helpers.httpRequest(options) as any;
+					break;
+				}
 
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/services/compute/${jobId}/output`,
-            qs: queryParams,
-            encoding: null,
-            json: false,
-          };
+				default:
+					throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
+			}
 
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
+			returnData.push({
+				json: result,
+				pairedItem: { item: i },
+			});
 
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
+		} catch (error: any) {
+			if (this.continueOnFail()) {
+				returnData.push({
+					json: { error: error.message },
+					pairedItem: { item: i },
+				});
+			} else {
+				throw new NodeApiError(this.getNode(), error, { itemIndex: i });
+			}
+		}
+	}
 
-      returnData.push({ json: result, pairedItem: { item: i } });
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({ 
-          json: { error: error.message }, 
-          pairedItem: { item: i } 
-        });
-      } else {
-        throw new NodeApiError(this.getNode(), error);
-      }
-    }
-  }
-
-  return returnData;
+	return returnData;
 }
 
 async function executeVeOceanOperations(
@@ -1344,334 +1816,260 @@ async function executeVeOceanOperations(
   for (let i = 0; i < items.length; i++) {
     try {
       let result: any;
-      
+
       switch (operation) {
-        case 'getVeOceanStats': {
-          const query = this.getNodeParameter('query', i) as string;
-          const veAllocate = this.getNodeParameter('veAllocate', i) as boolean;
-          
-          const queryParams: any = {
-            query: query,
-          };
-          
-          if (veAllocate !== undefined) {
-            queryParams.veAllocate = veAllocate;
-          }
-          
+        case 'getVeOceanLocks': {
+          const user = this.getNodeParameter('user', i) as string;
+          const chainId = this.getNodeParameter('chainId', i) as string;
+
           const options: any = {
             method: 'GET',
-            url: `${credentials.baseUrl}/api/aquarius/assets/query`,
-            qs: queryParams,
+            url: `${credentials.baseUrl}/api/aquarius/veocean/locks/${user}`,
             headers: {
-              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${credentials.apiKey}`,
+              'Content-Type': 'application/json'
             },
-            json: true,
+            qs: {
+              chainId: chainId
+            },
+            json: true
           };
-          
+
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
-        
-        case 'allocateVeOcean': {
-          const allocation = this.getNodeParameter('allocation', i) as string;
-          const userData = this.getNodeParameter('userData', i) as string;
-          
-          let allocationData: any;
-          let userDataParsed: any;
-          
-          try {
-            allocationData = typeof allocation === 'string' ? JSON.parse(allocation) : allocation;
-          } catch (error: any) {
-            throw new NodeOperationError(this.getNode(), `Invalid JSON in allocation parameter: ${error.message}`);
-          }
-          
-          try {
-            userDataParsed = userData ? (typeof userData === 'string' ? JSON.parse(userData) : userData) : {};
-          } catch (error: any) {
-            throw new NodeOperationError(this.getNode(), `Invalid JSON in userData parameter: ${error.message}`);
-          }
-          
+
+        case 'createVeOceanLock': {
+          const amount = this.getNodeParameter('amount', i) as string;
+          const unlockTime = this.getNodeParameter('unlockTime', i) as string;
+          const user = this.getNodeParameter('user', i) as string;
+
+          const body = {
+            amount: amount,
+            unlockTime: new Date(unlockTime).getTime() / 1000,
+            user: user
+          };
+
           const options: any = {
             method: 'POST',
-            url: `${credentials.baseUrl}/api/aquarius/assets/ddo`,
+            url: `${credentials.baseUrl}/api/aquarius/veocean/locks`,
             headers: {
-              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${credentials.apiKey}`,
+              'Content-Type': 'application/json'
             },
-            body: {
-              allocation: allocationData,
-              userData: userDataParsed,
-            },
-            json: true,
+            body: body,
+            json: true
           };
-          
+
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
-        
-        case 'getVeOceanAllocations': {
-          const did = this.getNodeParameter('did', i) as string;
-          
-          if (!did) {
-            throw new NodeOperationError(this.getNode(), 'DID is required for getting veOCEAN allocations');
-          }
-          
+
+        case 'getVeOceanRewards': {
+          const user = this.getNodeParameter('user', i) as string;
+          const chainId = this.getNodeParameter('chainId', i) as string;
+
           const options: any = {
             method: 'GET',
-            url: `${credentials.baseUrl}/api/aquarius/assets/ddo/${did}`,
+            url: `${credentials.baseUrl}/api/aquarius/veocean/rewards/${user}`,
             headers: {
-              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${credentials.apiKey}`,
+              'Content-Type': 'application/json'
             },
-            json: true,
+            qs: {
+              chainId: chainId
+            },
+            json: true
           };
-          
+
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
-        
-        case 'getRewards': {
-          const chainIds = this.getNodeParameter('chainIds', i) as string;
-          
-          const queryParams: any = {};
-          if (chainIds) {
-            queryParams.chainIds = chainIds;
-          }
-          
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/aquarius/stats`,
-            qs: queryParams,
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            json: true,
+
+        case 'claimVeOceanRewards': {
+          const user = this.getNodeParameter('user', i) as string;
+          const amounts = this.getNodeParameter('amounts', i) as string;
+          const chainId = this.getNodeParameter('chainId', i) as string;
+
+          const body = {
+            user: user,
+            amounts: amounts.split(',').map((amount: string) => amount.trim()),
+            chainId: chainId
           };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        case 'claimRewards': {
-          const did = this.getNodeParameter('did', i) as string;
-          const consumerAddress = this.getNodeParameter('consumerAddress', i) as string;
-          
-          if (!did) {
-            throw new NodeOperationError(this.getNode(), 'DID is required for claiming rewards');
-          }
-          
-          if (!consumerAddress) {
-            throw new NodeOperationError(this.getNode(), 'Consumer address is required for claiming rewards');
-          }
-          
+
           const options: any = {
             method: 'POST',
-            url: `${credentials.baseUrl}/api/aquarius/assets/ddo/${did}/order`,
+            url: `${credentials.baseUrl}/api/aquarius/veocean/claim`,
             headers: {
-              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${credentials.apiKey}`,
+              'Content-Type': 'application/json'
             },
-            body: {
-              consumerAddress: consumerAddress,
-            },
-            json: true,
+            body: body,
+            json: true
           };
-          
+
           result = await this.helpers.httpRequest(options) as any;
           break;
         }
-        
+
+        case 'getAllVeOceanAllocations': {
+          const chainId = this.getNodeParameter('chainId', i) as string;
+          const epoch = this.getNodeParameter('epoch', i) as number;
+
+          const qs: any = {
+            chainId: chainId
+          };
+
+          if (epoch && epoch > 0) {
+            qs.epoch = epoch;
+          }
+
+          const options: any = {
+            method: 'GET',
+            url: `${credentials.baseUrl}/api/aquarius/veocean/allocations`,
+            headers: {
+              'Authorization': `Bearer ${credentials.apiKey}`,
+              'Content-Type': 'application/json'
+            },
+            qs: qs,
+            json: true
+          };
+
+          result = await this.helpers.httpRequest(options) as any;
+          break;
+        }
+
         default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
+          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`, { itemIndex: i });
       }
-      
+
       returnData.push({
         json: result,
-        pairedItem: { item: i },
+        pairedItem: { item: i }
       });
-      
+
     } catch (error: any) {
       if (this.continueOnFail()) {
         returnData.push({
           json: { error: error.message },
-          pairedItem: { item: i },
+          pairedItem: { item: i }
         });
       } else {
-        if (error.httpCode) {
-          throw new NodeApiError(this.getNode(), error);
-        }
-        throw new NodeOperationError(this.getNode(), error.message);
+        throw new NodeApiError(this.getNode(), error, { itemIndex: i });
       }
     }
   }
-  
+
   return returnData;
 }
 
-async function executeAssetMetadataOperations(
-  this: IExecuteFunctions,
-  items: INodeExecutionData[],
+async function executeOrderOperations(
+	this: IExecuteFunctions,
+	items: INodeExecutionData[],
 ): Promise<INodeExecutionData[]> {
-  const returnData: INodeExecutionData[] = [];
-  const operation = this.getNodeParameter('operation', 0) as string;
-  const credentials = await this.getCredentials('oceanprotocolApi') as any;
+	const returnData: INodeExecutionData[] = [];
+	const operation = this.getNodeParameter('operation', 0) as string;
+	const credentials = await this.getCredentials('oceanprotocolApi') as any;
 
-  for (let i = 0; i < items.length; i++) {
-    try {
-      let result: any;
-      
-      switch (operation) {
-        case 'getMetadata': {
-          const did = this.getNodeParameter('did', i) as string;
-          
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/aquarius/assets/metadata/${did}`,
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        case 'searchMetadata': {
-          const query = this.getNodeParameter('query', i) as any;
-          const filters = this.getNodeParameter('filters', i, {}) as any;
-          const sort = this.getNodeParameter('sort', i, {}) as any;
-          
-          let searchQuery: any;
-          if (typeof query === 'string') {
-            try {
-              searchQuery = JSON.parse(query);
-            } catch (error: any) {
-              throw new NodeOperationError(this.getNode(), `Invalid JSON in query parameter: ${error.message}`);
-            }
-          } else {
-            searchQuery = query;
-          }
-          
-          let searchFilters: any = {};
-          if (typeof filters === 'string') {
-            try {
-              searchFilters = JSON.parse(filters);
-            } catch (error: any) {
-              throw new NodeOperationError(this.getNode(), `Invalid JSON in filters parameter: ${error.message}`);
-            }
-          } else {
-            searchFilters = filters;
-          }
-          
-          let sortOptions: any = {};
-          if (typeof sort === 'string') {
-            try {
-              sortOptions = JSON.parse(sort);
-            } catch (error: any) {
-              throw new NodeOperationError(this.getNode(), `Invalid JSON in sort parameter: ${error.message}`);
-            }
-          } else {
-            sortOptions = sort;
-          }
-          
-          const requestBody: any = {
-            query: searchQuery,
-            ...searchFilters,
-            ...sortOptions,
-          };
-          
-          const options: any = {
-            method: 'POST',
-            url: `${credentials.baseUrl}/api/aquarius/assets/metadata/query`,
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: requestBody,
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        case 'validateAssetName': {
-          const name = this.getNodeParameter('name', i) as string;
-          
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/aquarius/assets/names`,
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            qs: {
-              name: name,
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        case 'getSupportedChains': {
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/aquarius/chains/list`,
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        case 'getProtocolStats': {
-          const chainIds = this.getNodeParameter('chainIds', i, '') as string;
-          
-          const options: any = {
-            method: 'GET',
-            url: `${credentials.baseUrl}/api/aquarius/stats`,
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            json: true,
-          };
-          
-          if (chainIds) {
-            options.qs = {
-              chainIds: chainIds,
-            };
-          }
-          
-          result = await this.helpers.httpRequest(options) as any;
-          break;
-        }
-        
-        default:
-          throw new NodeOperationError(this.getNode(), `Unknown operation: ${operation}`);
-      }
-      
-      returnData.push({ json: result, pairedItem: { item: i } });
-      
-    } catch (error: any) {
-      if (this.continueOnFail()) {
-        returnData.push({ 
-          json: { 
-            error: error.message,
-            operation: operation,
-            item: i 
-          }, 
-          pairedItem: { item: i } 
-        });
-      } else {
-        if (error.httpCode) {
-          throw new NodeApiError(this.getNode(), error);
-        } else {
-          throw new NodeOperationError(this.getNode(), error.message);
-        }
-      }
-    }
-  }
-  
-  return returnData;
-}
+	for (let i = 0; i < items.length; i++) {
+		try {
+			let result: any;
+
+			switch (operation) {
+				case 'createOrder': {
+					const documentId = this.getNodeParameter('documentId', i) as string;
+					const serviceId = this.getNodeParameter('serviceId', i) as string;
+					const consumerAddress = this.getNodeParameter('consumerAddress', i) as string;
+					const signature = this.getNodeParameter('signature', i) as string;
+
+					const options: any = {
+						method: 'POST',
+						url: `${credentials.baseUrl}/api/services/order`,
+						headers: {
+							'Authorization': `Bearer ${credentials.apiKey}`,
+							'Content-Type': 'application/json',
+						},
+						json: true,
+						body: {
+							documentId,
+							serviceId,
+							consumerAddress,
+							signature,
+						},
+					};
+
+					result = await this.helpers.httpRequest(options) as any;
+					break;
+				}
+
+				case 'getOrder': {
+					const txId = this.getNodeParameter('txId', i) as string;
+
+					const options: any = {
+						method: 'GET',
+						url: `${credentials.baseUrl}/api/services/order/${txId}`,
+						headers: {
+							'Authorization': `Bearer ${credentials.apiKey}`,
+						},
+						json: true,
+					};
+
+					result = await this.helpers.httpRequest(options) as any;
+					break;
+				}
+
+				case 'getAllOrders': {
+					const consumerAddress = this.getNodeParameter('consumerAddress', i) as string;
+					const page = this.getNodeParameter('page', i, 1) as number;
+					const offset = this.getNodeParameter('offset', i, 0) as number;
+
+					const options: any = {
+						method: 'GET',
+						url: `${credentials.baseUrl}/api/services/orders/${consumerAddress}`,
+						headers: {
+							'Authorization': `Bearer ${credentials.apiKey}`,
+						},
+						qs: {
+							page,
+							offset,
+						},
+						json: true,
+					};
+
+					result = await this.helpers.httpRequest(options) as any;
+					break;
+				}
+
+				case 'downloadAsset': {
+					const documentId = this.getNodeParameter('documentId', i) as string;
+					const serviceId = this.getNodeParameter('serviceId', i) as string;
+					const fileIndex = this.getNodeParameter('fileIndex', i, 0) as number;
+					const signature = this.getNodeParameter('signature', i) as string;
+
+					const options: any = {
+						method: 'POST',
+						url: `${credentials.baseUrl}/api/services/download`,
+						headers: {
+							'Authorization': `Bearer ${credentials.apiKey}`,
+							'Content-Type': 'application/json',
+						},
+						json: true,
+						body: {
+							documentId,
+							serviceId,
+							fileIndex,
+							signature,
+						},
+					};
+
+					result = await this.helpers.httpRequest(options) as any;
+					break;
+				}
+
+				case 'initializeAsset': {
+					const documentId = this.getNodeParameter('documentId', i) as string;
+					const serviceId = this.getNodeParameter('serviceId', i) as string;
+					const signature = this.getNodeParameter('signature', i) as string;
+					const consumerAddress = this.getNodeParameter('consumerAddress', i) as string;
+
+					const options: any
